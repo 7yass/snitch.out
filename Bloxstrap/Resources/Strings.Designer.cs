@@ -2332,6 +2332,33 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dark.
+        /// </summary>
+        public static string Enums_RobloxTheme_Dark {
+            get {
+                return ResourceManager.GetString("Enums.RobloxTheme.Dark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default.
+        /// </summary>
+        public static string Enums_RobloxTheme_Default {
+            get {
+                return ResourceManager.GetString("Enums.RobloxTheme.Default", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Light.
+        /// </summary>
+        public static string Enums_RobloxTheme_Light {
+            get {
+                return ResourceManager.GetString("Enums.RobloxTheme.Light", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Private server.
         /// </summary>
         public static string Enums_ServerType_Private {
@@ -4454,6 +4481,24 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Lets Roblox start up with Windows and stay in the notification area after you close it..
+        /// </summary>
+        public static string Menu_Integrations_EnableRobloxBackgroundApp_Description {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.EnableRobloxBackgroundApp.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Let Roblox run in the background.
+        /// </summary>
+        public static string Menu_Integrations_EnableRobloxBackgroundApp_Title {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.EnableRobloxBackgroundApp.Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Allows Fishstrap to access Roblox&apos;s window handle allowing for better customization and features..
         /// </summary>
         public static string Menu_Integrations_EnableWindowManipulation_Description {
@@ -4513,6 +4558,33 @@ namespace Bloxstrap.Resources {
         public static string Menu_Integrations_RequiresActivityTracking {
             get {
                 return ResourceManager.GetString("Menu.Integrations.RequiresActivityTracking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to App Settings (Roblox).
+        /// </summary>
+        public static string Menu_Integrations_RobloxApp {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.RobloxApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The theme used by the Roblox app..
+        /// </summary>
+        public static string Menu_Integrations_RobloxTheme_Description {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.RobloxTheme.Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Roblox app theme.
+        /// </summary>
+        public static string Menu_Integrations_RobloxTheme_Title {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.RobloxTheme.Title", resourceCulture);
             }
         }
         
