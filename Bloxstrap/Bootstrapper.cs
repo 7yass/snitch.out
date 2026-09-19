@@ -1,4 +1,4 @@
-// To debug the automatic updater:
+﻿// To debug the automatic updater:
 // - Uncomment the definition below
 // - Publish the executable
 // - Launch the executable (click no when it asks you to upgrade)
@@ -707,6 +707,10 @@ namespace Bloxstrap
 
             if (_launchMode == LaunchMode.Player)
             {
+
+                // reapplied on every launch because roblox can reset the file on its own.
+                AppStorageManager.Apply();
+
                 GameJoin gameJoin = new();
 
                 _joinData = gameJoin.GetJoinDataByLaunchCommand(_launchCommandLine);

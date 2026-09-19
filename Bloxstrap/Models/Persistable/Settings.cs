@@ -25,6 +25,8 @@ namespace Bloxstrap.Models.Persistable
         public bool ForceLocalData { get; set; } = false;
         public bool CheckForUpdates { get; set; } = true;
         public bool ConfirmLaunches { get; set; } = true;
+        public bool EnableRobloxBackgroundApp { get; set; } = false;
+        public RobloxTheme RobloxTheme { get; set; } = RobloxTheme.Default;
         public string Locale { get; set; } = "nil";
         public bool ForceRobloxLanguage { get; set; } = false;
         public bool UseFastFlagManager { get; set; } = true;
