@@ -35,7 +35,8 @@ namespace Bloxstrap.UI.Elements.Base
             const int customThemeIndex = 2; // index for CustomTheme merged dictionary
 
             _themeService.SetTheme(App.Settings.Prop.Theme.GetFinal() == Enums.Theme.Dark ? ThemeType.Dark : ThemeType.Light);
-            _themeService.SetSystemAccent();
+            // snitch.out identity: fixed violet accent instead of system accent
+            _themeService.SetAccent(Color.FromRgb(0x8B, 0x5C, 0xF6));
 
             // there doesn't seem to be a way to query the name for merged dictionaries
             var dict = new ResourceDictionary { Source = new Uri($"pack://application:,,,/UI/Style/{Enum.GetName(App.Settings.Prop.Theme.GetFinal())}.xaml") };
