@@ -67,9 +67,6 @@ namespace Bloxstrap
         private bool _packageExtractionSuccess = true;
 
         private bool _mustUpgrade => App.LaunchSettings.ForceFlag.Active || App.State.Prop.ForceReinstall || String.IsNullOrEmpty(AppData.State.VersionGuid) || !File.Exists(AppData.ExecutablePath);
-
-        // snitch.out: true when launching a pinned cached version offline (manifest unavailable)
-        private bool _pinnedOfflineLaunch = false;
         private bool _noConnection = false;
 
         private AsyncMutex? _mutex;
@@ -482,7 +479,6 @@ namespace Bloxstrap
                     // mods still apply; file-restore from packages is skipped.
                     App.Logger.WriteLine(LOG_IDENT, $"Pinned manifest unavailable, launching offline from disk: {ex.Message}");
                     _versionPackageManifest = new("v0\n");
-                    _pinnedOfflineLaunch = true;
                 }
 
                 if (_launchMode == LaunchMode.Unknown)

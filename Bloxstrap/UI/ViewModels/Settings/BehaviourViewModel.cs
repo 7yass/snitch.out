@@ -150,7 +150,7 @@
                 var list = new List<string> { "" };
                 try
                 {
-                    list.AddRange(Utility.VersionManager.GetInstalledVersions().Select(x => x.VersionGuid));
+                    list.AddRange(Bloxstrap.Utility.VersionManager.GetInstalledVersions().Select(x => x.VersionGuid));
                 }
                 catch { }
                 return list;
@@ -175,7 +175,7 @@
                 string pinned = App.Settings.Prop.PinnedVersionGuid;
                 if (String.IsNullOrEmpty(pinned))
                     return "Using latest Roblox version.";
-                if (Utility.VersionManager.IsInstalled(pinned))
+                if (Bloxstrap.Utility.VersionManager.IsInstalled(pinned))
                     return $"Pinned to {pinned} (cached). Updates blocked. Live servers may reject old clients - best for Studio / local testing.";
                 return $"Pinned to {pinned} but it is not cached - will fall back to latest.";
             }

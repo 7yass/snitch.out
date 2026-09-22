@@ -63,7 +63,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
                 {
                     GameName = String.IsNullOrEmpty(game.GameName) ? $"Universe {game.UniverseId}" : game.GameName,
                     Sessions = game.Sessions,
-                    TotalTime = Utility.Time.FormatTimeSpan(TimeSpan.FromSeconds(game.TotalSeconds)),
+                    TotalTime = Bloxstrap.Utility.Time.FormatTimeSpan(TimeSpan.FromSeconds(game.TotalSeconds)),
                     LastPlayed = game.LastPlayed.ToString("g")
                 });
             }
@@ -73,7 +73,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
             TotalsText = games.Count == 0
                 ? "No tracked sessions yet. Play something and it will show up here."
-                : $"{games.Count} games · {sessions} sessions · {Utility.Time.FormatTimeSpan(TimeSpan.FromSeconds(totalSeconds))} total";
+                : $"{games.Count} games · {sessions} sessions · {Bloxstrap.Utility.Time.FormatTimeSpan(TimeSpan.FromSeconds(totalSeconds))} total";
 
             OnPropertyChanged(nameof(TotalsText));
         }

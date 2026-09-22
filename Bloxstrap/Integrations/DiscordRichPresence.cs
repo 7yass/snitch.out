@@ -17,6 +17,17 @@ namespace Bloxstrap.Integrations
         private string _statusBase = "";
         private Timer? _refreshTimer;
 
+        private DiscordRPC.RichPresence? _currentPresence;
+        private DiscordRPC.RichPresence? _originalPresence;
+
+        private FixedSizeList<ThumbnailCacheEntry> _thumbnailCache = new FixedSizeList<ThumbnailCacheEntry>(20);
+
+        private ulong? _smallImgBeingFetched = null;
+        private ulong? _largeImgBeingFetched = null;
+        private CancellationTokenSource? _fetchThumbnailsToken;
+
+        private bool _visible = true;
+
         public DiscordRichPresence(ActivityWatcher? activityWatcher, bool studioMode = false)
         {
             const string LOG_IDENT = "DiscordRichPresence";

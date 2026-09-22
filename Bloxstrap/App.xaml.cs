@@ -23,8 +23,6 @@ namespace Bloxstrap
         public const string ProjectDownloadLink = "https://github.com/7yass/snitch.out/releases";
         public const string ProjectHelpLink = "https://github.com/bloxstraplabs/bloxstrap/wiki";
         public const string ProjectSupportLink = "https://github.com/7yass/snitch.out/issues/new";
-        public const string ProjectHelpLink = "https://github.com/bloxstraplabs/bloxstrap/wiki";
-        public const string ProjectSupportLink = "https://github.com/7yass/snitch.out/issues/new";
         public const string ProjectRemoteDataLink = "https://raw.githubusercontent.com/7yass/snitch.out/main/Data.json";
 
         // snitch.out: Discord application for Rich Presence.
