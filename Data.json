@@ -1,0 +1,10 @@
+{
+  "alertEnabled": false,
+  "alertContent": "",
+  "alertSeverity": 2,
+  "killFlags": false,
+  "deeplinkUrl": "https://www.roblox.com/games",
+  "ignoredPackages": [
+    "RobloxPlayerInstaller.exe"
+  ]
+}

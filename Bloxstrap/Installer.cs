@@ -658,7 +658,7 @@ namespace Bloxstrap
             {
 #pragma warning disable CS0162 // Unreachable code detected
                 if (OpenReleaseNotes)
-                    Utilities.ShellExecute($"https://wiki.fishstrap.app/patch-notes/v{currentVer.Replace(".", "-")}");
+                    Utilities.ShellExecute($"https://github.com/7yass/snitch.out/releases/tag/v{currentVer}");
 #pragma warning restore CS0162 // Unreachable code detected
             }
             else

@@ -53,7 +53,7 @@ namespace Bloxstrap.Models.Persistable
             "RobloxCache",
             "RobloxStudioCache",
             "RobloxLogs",
-            "FishstrapLogs"
+            "SnitchLogs"
         };
         public bool EnableWindowManipulation { get; set; } = false;
         public bool FakeBorderlessFullscreen { get; set; } = false;

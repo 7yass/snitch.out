@@ -122,13 +122,13 @@
 
         public bool CleanerFishstrap
         {
-            get => CleanerItems.Contains("FishstrapLogs");
+            get => CleanerItems.Contains("SnitchLogs");
             set
             {
                 if (value)
-                    CleanerItems.Add("FishstrapLogs");
+                    CleanerItems.Add("SnitchLogs");
                 else
-                    CleanerItems.Remove("FishstrapLogs");
+                    CleanerItems.Remove("SnitchLogs");
             }
         }
 

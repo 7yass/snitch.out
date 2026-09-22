@@ -75,7 +75,7 @@
                 <ui:TextBox PlaceholderText="Roblox" Width="200" Text="{Binding WindowTitle, Mode=TwoWay}" />
             </controls:OptionControl>
 
-            <controls:OptionControl Header="{x:Static resources:Strings.Menu_Appearance_RobloxIcon_Title}" Description="{x:Static resources:Strings.Menu_Appearance_RobloxIcon_Description}" HelpLink="https://wiki.fishstrap.app/manual/appearance/#custom-icons">
+            <controls:OptionControl Header="{x:Static resources:Strings.Menu_Appearance_RobloxIcon_Title}" Description="{x:Static resources:Strings.Menu_Appearance_RobloxIcon_Description}" HelpLink="https://github.com/bloxstraplabs/bloxstrap/wiki">
                 <Grid Width="200" HorizontalAlignment="Right">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -193,10 +193,10 @@
         </ui:CardExpander>
 
         <controls:OptionControl Header="{x:Static resources:Strings.Menu_Appearance_CustomisationTitle_Title}" Description="{x:Static resources:Strings.Menu_Appearance_CustomisationTitle_Description}">
-            <ui:TextBox PlaceholderText="Fishstrap" Width="200" Text="{Binding Title, Mode=TwoWay}" />
+            <ui:TextBox PlaceholderText="snitch.out" Width="200" Text="{Binding Title, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <controls:OptionControl x:Name="IconSelector" Header="{x:Static resources:Strings.Menu_Appearance_Icon_Title}" Description="{x:Static resources:Strings.Menu_Appearance_Icon_Description}" HelpLink="https://wiki.fishstrap.app/manual/appearance/#custom-icons">
+        <controls:OptionControl x:Name="IconSelector" Header="{x:Static resources:Strings.Menu_Appearance_Icon_Title}" Description="{x:Static resources:Strings.Menu_Appearance_Icon_Description}" HelpLink="https://github.com/bloxstraplabs/bloxstrap/wiki">
             <Grid Width="200" HorizontalAlignment="Right">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

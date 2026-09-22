@@ -25,7 +25,7 @@ namespace Bloxstrap
         public const string ProjectSupportLink = "https://github.com/7yass/snitch.out/issues/new";
         public const string ProjectHelpLink = "https://github.com/bloxstraplabs/bloxstrap/wiki";
         public const string ProjectSupportLink = "https://github.com/7yass/snitch.out/issues/new";
-        public const string ProjectRemoteDataLink = "https://config.fishstrap.app/v1/Data.json";
+        public const string ProjectRemoteDataLink = "https://raw.githubusercontent.com/7yass/snitch.out/main/Data.json";
 
         public const string RobloxPlayerAppName = "RobloxPlayerBeta.exe";
         public const string RobloxStudioAppName = "RobloxStudioBeta.exe";
