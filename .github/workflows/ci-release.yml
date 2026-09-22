@@ -30,6 +30,22 @@ jobs:
         path: .\Bloxstrap\bin\Release\net6.0-windows\win-x64\publish\snitch.out.exe
         archive: false
 
+    - name: Build installer
+      shell: pwsh
+      run: |
+        $version = "${{ github.ref_name }}".TrimStart("v")
+        if ("${{ github.ref_type }}" -ne "tag") { $version = "0.0.0" }
+        choco install innosetup -y --no-progress
+        & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=$version installer/snitch.iss
+        Get-ChildItem snitch.out-Setup-*.exe
+
+    - name: Upload installer artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: snitch.out-setup
+        path: snitch.out-Setup-*.exe
+        archive: false
+
   release:
     needs: build
     runs-on: ubuntu-latest
@@ -38,18 +54,26 @@ jobs:
       contents: write
 
     steps:
-      - name: Download artifact
+      - name: Download app artifact
         uses: actions/download-artifact@v8
         with:
           name: snitch.out
+          path: release
+
+      - name: Download installer artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: snitch.out-setup
           path: release
 
       - name: Create release
         uses: softprops/action-gh-release@v3
         with:
           draft: true
-          files: release/snitch.out.exe
+          files: |
+            release/snitch.out.exe
+            release/snitch.out-Setup-*.exe
           name: snitch.out ${{ github.ref_name }}
           body: |
-            Requires the [.NET 6 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0) on first run (the app will prompt you).
+            Run `snitch.out-Setup-*.exe` to install. It checks for the .NET 6 Desktop Runtime for you.
           fail_on_unmatched_files: true

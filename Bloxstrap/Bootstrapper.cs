@@ -1128,7 +1128,8 @@ namespace Bloxstrap
 
                 File.Copy(Paths.Process, downloadLocation, true);
 #else
-                var asset = releaseInfo.Assets![0];
+                // snitch.out: pick our exe by name, releases also carry the setup
+                var asset = releaseInfo.Assets!.FirstOrDefault(x => x.Name.Equals($"{App.ProjectName}.exe", StringComparison.OrdinalIgnoreCase)) ?? releaseInfo.Assets![0];
 
                 string downloadLocation = Path.Combine(Paths.TempUpdates, asset.Name);
 
