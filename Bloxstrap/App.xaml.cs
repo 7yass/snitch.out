@@ -30,7 +30,7 @@ namespace Bloxstrap
         // snitch.out: Discord application for Rich Presence.
         // Create one at https://discord.com/developers/applications, upload
         // your icon there, and paste its Application ID here.
-        public const string DiscordAppId = "1005469189907173486";
+        public const string DiscordAppId = "1552020118320713820";
 
         public const string RobloxPlayerAppName = "RobloxPlayerBeta.exe";
         public const string RobloxStudioAppName = "RobloxStudioBeta.exe";
