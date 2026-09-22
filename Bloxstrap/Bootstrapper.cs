@@ -67,6 +67,9 @@ namespace Bloxstrap
         private bool _packageExtractionSuccess = true;
 
         private bool _mustUpgrade => App.LaunchSettings.ForceFlag.Active || App.State.Prop.ForceReinstall || String.IsNullOrEmpty(AppData.State.VersionGuid) || !File.Exists(AppData.ExecutablePath);
+
+        // snitch.out: true when launching a pinned cached version offline (manifest unavailable)
+        private bool _pinnedOfflineLaunch = false;
         private bool _noConnection = false;
 
         private AsyncMutex? _mutex;
@@ -443,6 +446,55 @@ namespace Bloxstrap
                     App.Logger.WriteLine(LOG_IDENT, $"Forcing channel {ChannelFlagData}");
                     EnrollChannel(ChannelFlagData);
                 }
+            }
+
+            // snitch.out: pinned version for testing older builds.
+            // Old manifests are purged from setup.roblox.com, so a cached
+            // copy is the only thing that can launch. Live servers will still
+            // reject old clients - this is for local/Studio comparison only.
+            string? pinnedGuid = App.Settings.Prop.PinnedVersionGuid;
+
+            bool usePinned = !App.LaunchSettings.VersionFlag.Active &&
+                !String.IsNullOrEmpty(pinnedGuid) &&
+                Utility.VersionManager.IsInstalled(pinnedGuid!);
+
+            if (usePinned)
+            {
+                _latestVersionGuid = pinnedGuid!;
+                _latestVersion = null;
+
+                if (_staticDirectory)
+                    _latestVersionDirectory = AppData.StaticDirectory;
+                else
+                    _latestVersionDirectory = Path.Combine(Paths.Versions, _latestVersionGuid);
+
+                App.Logger.WriteLine(LOG_IDENT, $"Using pinned version {_latestVersionGuid} from local cache");
+
+                try
+                {
+                    string pinnedManifestUrl = Deployment.GetLocation($"/{_latestVersionGuid}-rbxPkgManifest.txt");
+                    var pinnedManifestData = await App.HttpClient.GetStringAsync(pinnedManifestUrl);
+                    _versionPackageManifest = new(pinnedManifestData);
+                }
+                catch (Exception ex)
+                {
+                    // manifest purged from CDN - launch from disk without it.
+                    // mods still apply; file-restore from packages is skipped.
+                    App.Logger.WriteLine(LOG_IDENT, $"Pinned manifest unavailable, launching offline from disk: {ex.Message}");
+                    _versionPackageManifest = new("v0\n");
+                    _pinnedOfflineLaunch = true;
+                }
+
+                if (_launchMode == LaunchMode.Unknown)
+                {
+                    bool isPlayer = File.Exists(Path.Combine(_latestVersionDirectory, App.RobloxPlayerAppName));
+                    _launchMode = isPlayer ? LaunchMode.Player : LaunchMode.Studio;
+                    SetupAppData();
+                }
+
+                // point current state at the pinned build so we skip re-download
+                AppData.State.VersionGuid = _latestVersionGuid;
+                return;
             }
 
             if (!App.LaunchSettings.VersionFlag.Active || string.IsNullOrEmpty(App.LaunchSettings.VersionFlag.Data))
@@ -1173,6 +1225,21 @@ namespace Bloxstrap
             foreach (string dir in Directory.GetDirectories(Paths.Versions))
             {
                 string dirName = Path.GetFileName(dir);
+
+                // snitch.out: keep snapshots for version comparison testing
+                if (App.Settings.Prop.KeepOldVersions)
+                {
+                    // only delete the pinned version never, and otherwise keep everything
+                    // (disk usage grows - user opts in via KeepOldVersions)
+                    if (dirName == App.Settings.Prop.PinnedVersionGuid)
+                        continue;
+
+                    continue;
+                }
+
+                // snitch.out: never delete the pinned version
+                if (!String.IsNullOrEmpty(App.Settings.Prop.PinnedVersionGuid) && dirName == App.Settings.Prop.PinnedVersionGuid)
+                    continue;
 
                 if (
                     !_staticDirectory && (dirName != App.RobloxState.Prop.Player.VersionGuid && dirName != App.RobloxState.Prop.Studio.VersionGuid) ||

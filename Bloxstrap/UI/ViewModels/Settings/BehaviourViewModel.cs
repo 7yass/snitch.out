@@ -131,5 +131,60 @@
                     CleanerItems.Remove("FishstrapLogs");
             }
         }
+
+        // snitch.out: version snapshot keeper
+        public bool KeepOldVersions
+        {
+            get => App.Settings.Prop.KeepOldVersions;
+            set
+            {
+                App.Settings.Prop.KeepOldVersions = value;
+                OnPropertyChanged(nameof(KeepOldVersions));
+            }
+        }
+
+        public List<string> InstalledVersionOptions
+        {
+            get
+            {
+                var list = new List<string> { "" };
+                try
+                {
+                    list.AddRange(Utility.VersionManager.GetInstalledVersions().Select(x => x.VersionGuid));
+                }
+                catch { }
+                return list;
+            }
+        }
+
+        public string PinnedVersionGuid
+        {
+            get => App.Settings.Prop.PinnedVersionGuid;
+            set
+            {
+                App.Settings.Prop.PinnedVersionGuid = value ?? "";
+                OnPropertyChanged(nameof(PinnedVersionGuid));
+                OnPropertyChanged(nameof(PinStatusText));
+            }
+        }
+
+        public string PinStatusText
+        {
+            get
+            {
+                string pinned = App.Settings.Prop.PinnedVersionGuid;
+                if (String.IsNullOrEmpty(pinned))
+                    return "Using latest Roblox version.";
+                if (Utility.VersionManager.IsInstalled(pinned))
+                    return $"Pinned to {pinned} (cached). Updates blocked. Live servers may reject old clients - best for Studio / local testing.";
+                return $"Pinned to {pinned} but it is not cached - will fall back to latest.";
+            }
+        }
+
+        public void RefreshVersions()
+        {
+            OnPropertyChanged(nameof(InstalledVersionOptions));
+            OnPropertyChanged(nameof(PinStatusText));
+        }
     }
 }

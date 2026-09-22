@@ -44,6 +44,35 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
+                        <TextBlock FontSize="14" Text="Roblox version snapshots" />
+                        <TextBlock Margin="0,2,0,0" FontSize="12" Text="Pin a cached version-xxxx build for testing. Old builds cannot join live servers." Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                    </StackPanel>
+                </Grid>
+            </ui:CardExpander.Header>
+
+            <StackPanel>
+                <controls:OptionControl
+                    Header="Keep old versions"
+                    Description="Don't delete cached version folders on update. Required to build up snapshots for comparison. Uses more disk space.">
+                    <ui:ToggleSwitch IsChecked="{Binding KeepOldVersions, Mode=TwoWay}" />
+                </controls:OptionControl>
+                <controls:OptionControl
+                    Header="Pinned version"
+                    Description="Empty = always latest. Pick a cached version-xxxx to block updates and launch it instead.">
+                    <ComboBox Width="250" Padding="10,5,10,5" ItemsSource="{Binding InstalledVersionOptions, Mode=OneWay}" SelectedItem="{Binding PinnedVersionGuid, Mode=TwoWay}" />
+                </controls:OptionControl>
+                <TextBlock Margin="0,4,0,0" FontSize="12" Text="{Binding PinStatusText, Mode=OneWay}" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+            </StackPanel>
+        </ui:CardExpander>
+
+        <ui:CardExpander Grid.Row="1" Margin="0,8,0,0" IsExpanded="True">
+            <ui:CardExpander.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
                         <TextBlock FontSize="14" Text="{x:Static resources:Strings.Menu_Bootstrapper_CleanUp_Title}" />
                         <TextBlock Margin="0,2,0,0" FontSize="12" Text="{x:Static resources:Strings.Menu_Bootstrapper_CleanUp_Description}" Foreground="{DynamicResource TextFillColorTertiaryBrush}"  />
                     </StackPanel>
