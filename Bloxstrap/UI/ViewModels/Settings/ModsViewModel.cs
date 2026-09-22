@@ -102,6 +102,97 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public FontModPresetTask TextFontTask { get; } = new();
 
+        public DeathSoundModPresetTask DeathSoundTask { get; } = new();
+
+        public CursorFileModPresetTask CustomCursorTask { get; } = new();
+
+        private static readonly byte[] PngHeader = new byte[8] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+
+        private static bool IsValidAudio(string path)
+        {
+            byte[] header = File.ReadAllBytes(path).Take(4).ToArray();
+            if (header.Length < 4)
+                return false;
+
+            // ID3 tag, MP3 frame sync, or Ogg container
+            return (header[0] == 0x49 && header[1] == 0x44 && header[2] == 0x33) ||
+                   (header[0] == 0xFF && (header[1] & 0xE0) == 0xE0) ||
+                   (header[0] == 0x4F && header[1] == 0x67 && header[2] == 0x67 && header[3] == 0x53);
+        }
+
+        private void ManageCustomDeathSound()
+        {
+            if (!String.IsNullOrEmpty(DeathSoundTask.NewState))
+            {
+                DeathSoundTask.NewState = "";
+            }
+            else
+            {
+                var dialog = new OpenFileDialog
+                {
+                    Filter = $"Audio files|*.mp3;*.ogg"
+                };
+
+                if (dialog.ShowDialog() != true)
+                    return;
+
+                if (!IsValidAudio(dialog.FileName))
+                {
+                    Frontend.ShowMessageBox("That file is not a valid MP3 or OGG audio file.", MessageBoxImage.Error);
+                    return;
+                }
+
+                DeathSoundTask.NewState = dialog.FileName;
+            }
+
+            OnPropertyChanged(nameof(ChooseCustomDeathSoundVisibility));
+            OnPropertyChanged(nameof(DeleteCustomDeathSoundVisibility));
+        }
+
+        private void ManageCustomCursor()
+        {
+            if (!String.IsNullOrEmpty(CustomCursorTask.NewState))
+            {
+                CustomCursorTask.NewState = "";
+            }
+            else
+            {
+                var dialog = new OpenFileDialog
+                {
+                    Filter = $"Image files|*.png"
+                };
+
+                if (dialog.ShowDialog() != true)
+                    return;
+
+                if (!File.ReadAllBytes(dialog.FileName).Take(8).SequenceEqual(PngHeader))
+                {
+                    Frontend.ShowMessageBox("That file is not a valid PNG image.", MessageBoxImage.Error);
+                    return;
+                }
+
+                CustomCursorTask.NewState = dialog.FileName;
+
+                // custom file and cursor packs share target files - packs lose
+                CursorTypeTask.NewState = Enums.CursorType.Default;
+            }
+
+            OnPropertyChanged(nameof(ChooseCustomCursorVisibility));
+            OnPropertyChanged(nameof(DeleteCustomCursorVisibility));
+        }
+
+        public Visibility ChooseCustomDeathSoundVisibility => !String.IsNullOrEmpty(DeathSoundTask.NewState) ? Visibility.Collapsed : Visibility.Visible;
+
+        public Visibility DeleteCustomDeathSoundVisibility => !String.IsNullOrEmpty(DeathSoundTask.NewState) ? Visibility.Visible : Visibility.Collapsed;
+
+        public ICommand ManageCustomDeathSoundCommand => new RelayCommand(ManageCustomDeathSound);
+
+        public Visibility ChooseCustomCursorVisibility => !String.IsNullOrEmpty(CustomCursorTask.NewState) ? Visibility.Collapsed : Visibility.Visible;
+
+        public Visibility DeleteCustomCursorVisibility => !String.IsNullOrEmpty(CustomCursorTask.NewState) ? Visibility.Visible : Visibility.Collapsed;
+
+        public ICommand ManageCustomCursorCommand => new RelayCommand(ManageCustomCursor);
+
         private void OpenCompatSettings()
         {
             string path = new RobloxPlayerData().ExecutablePath;

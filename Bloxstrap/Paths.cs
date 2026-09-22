@@ -35,6 +35,10 @@
         public static string Application { get; private set; } = "";
 
         public static string CustomFont => Path.Combine(Modifications, "content\\fonts\\CustomFont.ttf");
+        // snitch.out: custom death sound + cursor pickers
+        public static string CustomDeathSound => Path.Combine(Modifications, "content\\sounds\\ouch.mp3");
+        public static string CustomCursor => Path.Combine(Modifications, "content\\textures\\Cursors\\KeyboardMouse\\ArrowCursor.png");
+        public static string CustomFarCursor => Path.Combine(Modifications, "content\\textures\\Cursors\\KeyboardMouse\\ArrowFarCursor.png");
 
         public static bool Initialized => !String.IsNullOrEmpty(Base);
 
