@@ -22,6 +22,14 @@ It is a fork of [Fishstrap](https://github.com/fishstrap/fishstrap) (itself a
 fork of [Bloxstrap][bloxstrap]), rebranded and extended with pinned cached
 builds for comparing Roblox versions.
 
+## Install (build from source)
+
+Requirements are handled for you: Windows 10+, plus internet. Just run
+[`installer/install.bat`](installer/install.bat) — it installs git, the
+.NET 6 SDK and the .NET 6 Desktop Runtime via winget if missing, clones this
+repo, compiles Release, installs to `%LOCALAPPDATA%\snitch.out`, creates a
+Start Menu shortcut, and launches the app. Re-run it any time to update.
+
 If you found any bugs, please [open an issue here][repo-new-issue].
 
 > [!NOTE]
