@@ -88,6 +88,7 @@ end;
 function InitializeSetup(): Boolean;
 var
   Answer: Integer;
+  ExecCode: Integer;
 begin
   Result := True;
 
@@ -100,7 +101,7 @@ begin
     mbConfirmation, MB_YESNO);
 
   if Answer = IDYES then
-    ShellExec('open', DotNetDownloadUrl, '', '', SW_SHOW, ewNoWait, 0);
+    ShellExec('open', DotNetDownloadUrl, '', '', SW_SHOW, ewNoWait, ExecCode);
 
   Result := False;
 end;

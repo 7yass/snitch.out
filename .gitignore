@@ -348,3 +348,6 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# snitch.out installer outputs (built in CI)
+snitch.out-Setup-*.exe
