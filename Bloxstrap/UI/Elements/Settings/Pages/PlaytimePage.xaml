@@ -1,0 +1,66 @@
+<ui:UiPage x:Class="Bloxstrap.UI.Elements.Settings.Pages.PlaytimePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:local="clr-namespace:Bloxstrap.UI.Elements.Settings.Pages"
+      xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
+      xmlns:resources="clr-namespace:Bloxstrap.Resources"
+      xmlns:dmodels="clr-namespace:Bloxstrap.UI.ViewModels.Settings"
+      d:DataContext="{d:DesignInstance dmodels:PlaytimeViewModel, IsDesignTimeCreatable=True}"
+      mc:Ignorable="d" 
+      d:DesignHeight="800" d:DesignWidth="800"
+      Title="PlaytimePage"
+      Scrollable="True">
+
+    <StackPanel Margin="0,0,14,14">
+        <TextBlock Text="How much you play, per game. Sessions are recorded when you leave a server." FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+
+        <ui:CardAction Margin="0,16,0,0" Icon="Wallet24" Command="{Binding RefreshBalanceCommand, Mode=OneTime}">
+            <StackPanel>
+                <TextBlock FontSize="14" Text="Robux balance (click to refresh)" TextWrapping="Wrap" />
+                <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Text" Value="{Binding RobuxText, Mode=OneWay}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding NeedsCookieAccess, Mode=OneWay}" Value="True">
+                                    <Setter Property="Text" Value="Enable account access under Behaviour (experimental), then relaunch to load your balance." />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StackPanel>
+        </ui:CardAction>
+
+        <TextBlock Margin="0,16,0,0" FontSize="14" Text="{Binding TotalsText, Mode=OneWay}" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+
+        <DataGrid Margin="0,8,0,0" HeadersVisibility="Column" GridLinesVisibility="Horizontal" AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" CanUserReorderColumns="False" ItemsSource="{Binding Games, Mode=OneWay}">
+            <DataGrid.Style>
+                <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                </Style>
+            </DataGrid.Style>
+
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="{DynamicResource ControlFillColorTertiaryBrush}" />
+                    <Setter Property="Height" Value="32" />
+                    <Setter Property="Padding" Value="8,0,8,0" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource ControlElevationBorderBrush}" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Game" Binding="{Binding GameName}" Width="*" />
+                <DataGridTextColumn Header="Sessions" Binding="{Binding Sessions}" />
+                <DataGridTextColumn Header="Time played" Binding="{Binding TotalTime}" />
+                <DataGridTextColumn Header="Last played" Binding="{Binding LastPlayed}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </StackPanel>
+</ui:UiPage>

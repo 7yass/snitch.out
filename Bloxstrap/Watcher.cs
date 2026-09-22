@@ -74,6 +74,14 @@ namespace Bloxstrap
             {
                 ActivityWatcher = new(_watcherData.LogFile);
 
+                // snitch.out: bank finished sessions into per-game playtime
+                ActivityWatcher.OnGameLeave += (_, _) =>
+                {
+                    var session = ActivityWatcher.History.FirstOrDefault();
+                    if (session is not null)
+                        App.Playtime.RecordLeave(session);
+                };
+
                 if (App.Settings.Prop.UseDisableAppPatch)
                 {
                     ActivityWatcher.OnAppClose += delegate
@@ -161,6 +169,9 @@ namespace Bloxstrap
             App.State.Prop.TotalPlaytimeSeconds += _sessionSeconds;
             App.State.Prop.WatcherRunning = false;
             App.State.Save();
+
+            // snitch.out: persist per-game playtime recorded this session
+            App.Playtime.Save();
 
             GC.SuppressFinalize(this);
         }

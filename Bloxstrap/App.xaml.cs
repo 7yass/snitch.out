@@ -70,6 +70,9 @@ namespace Bloxstrap
 
         public static readonly FastFlagManager FastFlags = new();
 
+        // snitch.out: per-game playtime
+        public static readonly PlaytimeManager Playtime = new();
+
         public static readonly GlobalSettingsManager GlobalSettings = new();
 
         public static readonly CookiesManager Cookies = new();
@@ -325,6 +328,7 @@ namespace Bloxstrap
                 RobloxState.Load();
                 FastFlags.Load();
                 GlobalSettings.Load();
+                Playtime.Load();
 
                 if (Settings.Prop.AllowCookieAccess)
                     Task.Run(Cookies.LoadCookies);
