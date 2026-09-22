@@ -136,6 +136,59 @@ namespace Bloxstrap
 
         public bool IsPreset(string Flag) => PresetFlags.Values.Any(v => v.ToLower() == Flag.ToLower());
 
+        // snitch.out: snapshot of widely-documented allowlisted flags.
+        // Roblox owns the real allowlist and can change it at any time, so
+        // this is advisory only: unknown does NOT mean blocked.
+        public static readonly HashSet<string> KnownAllowlistedFlags = new(PresetFlags.Values, StringComparer.OrdinalIgnoreCase);
+
+        public bool IsKnownAllowlisted(string flag) => IsPreset(flag) || KnownAllowlistedFlags.Contains(flag);
+
+        // snitch.out: named flag profiles stored next to the main flags file
+        public static string FlagProfilesDirectory => Path.Combine(Paths.Base, "FlagProfiles");
+
+        public List<string> GetProfiles()
+        {
+            if (!Directory.Exists(FlagProfilesDirectory))
+                return new List<string>();
+
+            return Directory.GetFiles(FlagProfilesDirectory, "*.json")
+                .Select(x => Path.GetFileNameWithoutExtension(x))
+                .OrderBy(x => x)
+                .ToList();
+        }
+
+        public void SaveProfile(string name)
+        {
+            if (String.IsNullOrWhiteSpace(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+                throw new ArgumentException("Invalid profile name", nameof(name));
+
+            Directory.CreateDirectory(FlagProfilesDirectory);
+
+            string contents = JsonSerializer.Serialize(Prop, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(Path.Combine(FlagProfilesDirectory, $"{name}.json"), contents);
+        }
+
+        public void LoadProfile(string name)
+        {
+            string path = Path.Combine(FlagProfilesDirectory, $"{name}.json");
+            string contents = File.ReadAllText(path);
+
+            var flags = JsonSerializer.Deserialize<Dictionary<string, object>>(contents);
+
+            if (flags is null)
+                throw new InvalidDataException("Profile deserialization returned null");
+
+            Prop = new Dictionary<string, object>(flags);
+        }
+
+        public void DeleteProfile(string name)
+        {
+            string path = Path.Combine(FlagProfilesDirectory, $"{name}.json");
+
+            if (File.Exists(path))
+                File.Delete(path);
+        }
+
         public override void Save()
         {
             // convert all flag values to strings before saving

@@ -3,6 +3,8 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Collections.ObjectModel;
 
+using Microsoft.Win32;
+
 using Wpf.Ui.Mvvm.Contracts;
 
 using Bloxstrap.UI.Elements.Dialogs;
@@ -49,7 +51,8 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
                 {
                     // Enabled = true,
                     Name = pair.Key,
-                    Value = pair.Value?.ToString() ?? ""
+                    Value = pair.Value?.ToString() ?? "",
+                    Status = App.FastFlags.IsKnownAllowlisted(pair.Key) ? "✓" : "?"
                 };
 
                 /* if (entry.Name.StartsWith("Disable"))
@@ -105,11 +108,25 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
 
             if (App.FastFlags.GetValue(name) is null)
             {
+                // snitch.out: advisory only - Roblox owns the real allowlist
+                if (!App.FastFlags.IsKnownAllowlisted(name))
+                {
+                    var result = Frontend.ShowMessageBox(
+                        $"'{name}' is not in snitch.out's known-allowlisted set, so Roblox may silently ignore it. Add it anyway?",
+                        MessageBoxImage.Question,
+                        MessageBoxButton.YesNo
+                    );
+
+                    if (result != MessageBoxResult.Yes)
+                        return;
+                }
+
                 entry = new FastFlag
                 {
                     // Enabled = true,
                     Name = name,
-                    Value = value
+                    Value = value,
+                    Status = App.FastFlags.IsKnownAllowlisted(name) ? "✓" : "?"
                 };
 
                 if (!name.Contains(_searchFilter))
@@ -246,7 +263,11 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
         }
 
         // refresh list on page load to synchronize with preset page
-        private void Page_Loaded(object sender, RoutedEventArgs e) => ReloadList();
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            RefreshProfiles();
+            ReloadList();
+        }
 
         private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
@@ -324,27 +345,150 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
             ReloadList();
         }
 
-        private void ExportJSONButton_Click(object sender, RoutedEventArgs e)
+        private Dictionary<string, object> GetExportDictionary()
         {
-            Dictionary<string, object> FFlagsForExporting = new Dictionary<string, object>();
+            var exporting = new Dictionary<string, object>();
 
-            var IncludePresetsDialog = Frontend.ShowMessageBox(
+            var includePresetsDialog = Frontend.ShowMessageBox(
                 Strings.Menu_FastFlagEditor_ExportJson_IncludePresets,
-                MessageBoxImage.Question, 
+                MessageBoxImage.Question,
                 MessageBoxButton.YesNo
                 );
 
-            foreach (var Flag in App.FastFlags.Prop)
+            foreach (var flag in App.FastFlags.Prop)
             {
-                if (App.FastFlags.IsPreset(Flag.Key) && IncludePresetsDialog != MessageBoxResult.Yes) 
+                if (App.FastFlags.IsPreset(flag.Key) && includePresetsDialog != MessageBoxResult.Yes)
                     continue;
 
-                FFlagsForExporting.Add(Flag.Key, Flag.Value);
+                exporting.Add(flag.Key, flag.Value);
             }
 
-            string json = JsonSerializer.Serialize(FFlagsForExporting, new JsonSerializerOptions { WriteIndented = true });
+            return exporting;
+        }
+
+        private void ExportJSONButton_Click(object sender, RoutedEventArgs e)
+        {
+            string json = JsonSerializer.Serialize(GetExportDictionary(), new JsonSerializerOptions { WriteIndented = true });
             Clipboard.SetDataObject(json);
             Frontend.ShowMessageBox(Strings.Menu_FastFlagEditor_JsonCopiedToClipboard, MessageBoxImage.Information);
+        }
+
+        private void ImportFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog
+            {
+                Filter = "JSON files|*.json"
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            try
+            {
+                ImportJSON(File.ReadAllText(dialog.FileName));
+            }
+            catch (Exception ex)
+            {
+                Frontend.ShowMessageBox(
+                    String.Format(Strings.Menu_FastFlagEditor_InvalidJSON, ex.Message),
+                    MessageBoxImage.Error
+                );
+            }
+        }
+
+        private void ExportFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new SaveFileDialog
+            {
+                FileName = "flags.json",
+                Filter = "JSON files|*.json"
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            string json = JsonSerializer.Serialize(GetExportDictionary(), new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(dialog.FileName, json);
+        }
+
+        private void RefreshProfiles()
+        {
+            string? selected = ProfilesComboBox.SelectedItem as string;
+
+            ProfilesComboBox.ItemsSource = App.FastFlags.GetProfiles();
+
+            if (selected is not null && App.FastFlags.GetProfiles().Contains(selected))
+                ProfilesComboBox.SelectedItem = selected;
+        }
+
+        private void SaveProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            string name = ProfileNameTextBox.Text.Trim();
+
+            if (String.IsNullOrEmpty(name))
+            {
+                Frontend.ShowMessageBox("Enter a profile name first.", MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                App.FastFlags.SaveProfile(name);
+            }
+            catch (Exception ex)
+            {
+                Frontend.ShowMessageBox($"Could not save profile: {ex.Message}", MessageBoxImage.Error);
+                return;
+            }
+
+            ProfileNameTextBox.Text = "";
+            RefreshProfiles();
+            ProfilesComboBox.SelectedItem = name;
+        }
+
+        private void ApplyProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProfilesComboBox.SelectedItem is not string name)
+                return;
+
+            var result = Frontend.ShowMessageBox(
+                $"Replace your current flags with profile '{name}'?",
+                MessageBoxImage.Question,
+                MessageBoxButton.YesNo
+            );
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                App.FastFlags.LoadProfile(name);
+            }
+            catch (Exception ex)
+            {
+                Frontend.ShowMessageBox($"Could not load profile: {ex.Message}", MessageBoxImage.Error);
+                return;
+            }
+
+            ReloadList();
+        }
+
+        private void DeleteProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProfilesComboBox.SelectedItem is not string name)
+                return;
+
+            var result = Frontend.ShowMessageBox(
+                $"Delete profile '{name}'?",
+                MessageBoxImage.Question,
+                MessageBoxButton.YesNo
+            );
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            App.FastFlags.DeleteProfile(name);
+            RefreshProfiles();
         }
 
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
