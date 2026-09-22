@@ -19,6 +19,9 @@
     
   <ItemGroup>
     <Resource Include="Bloxstrap.ico" />
+    <Resource Include="..\icon.jpg">
+      <Link>snitch-hero.jpg</Link>
+    </Resource>
     <Resource Include="Resources\BootstrapperStyles\TerminalDialog\Powershell.png" />
     <Resource Include="Resources\BootstrapperStyles\TwentyFiveDialog\PlayerLogo.png" />
     <Resource Include="Resources\BootstrapperStyles\TwentyFiveDialog\Roblox.png" />

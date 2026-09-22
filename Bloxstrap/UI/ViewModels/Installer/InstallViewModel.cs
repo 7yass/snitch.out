@@ -27,6 +27,7 @@ namespace Bloxstrap.UI.ViewModels.Installer
 
                 installer.InstallLocation = value;
                 OnPropertyChanged(nameof(DataFoundMessageVisibility));
+                OnPropertyChanged(nameof(PrereqDiskText));
             }
         }
 
@@ -60,6 +61,52 @@ namespace Bloxstrap.UI.ViewModels.Installer
         public bool ShowNotFound // im lazy
         {
             get => !Directory.Exists(installer.BloxstrapInstallDirectory);
+        }
+
+        // snitch.out: Froststrap-style prerequisite readout
+        public string PrereqOsText => $"Windows {Environment.OSVersion.Version}";
+
+        public string PrereqWebView2Text
+        {
+            get
+            {
+                string? version = GetWebView2Version();
+                return version is null
+                    ? "Not found - installed automatically with Roblox"
+                    : $"Version {version}";
+            }
+        }
+
+        public string PrereqDiskText
+        {
+            get
+            {
+                try
+                {
+                    string root = Path.GetPathRoot(Path.GetFullPath(InstallLocation))!;
+                    var drive = new DriveInfo(root);
+                    double freeGb = drive.AvailableFreeSpace / 1024d / 1024d / 1024d;
+                    return $"{freeGb:0.0} GB free (3 GB recommended)";
+                }
+                catch
+                {
+                    return "Unknown";
+                }
+            }
+        }
+
+        private static string? GetWebView2Version()
+        {
+            const string subkey = @"SOFTWARE\Microsoft\EdgeUpdate\ClientState\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}";
+
+            foreach (var root in new[] { Microsoft.Win32.Registry.CurrentUser, Microsoft.Win32.Registry.LocalMachine })
+            {
+                using var key = root.OpenSubKey(subkey);
+                if (key?.GetValue("pv") is string version && !String.IsNullOrEmpty(version))
+                    return version;
+            }
+
+            return null;
         }
 
         public ICommand BrowseInstallLocationCommand => new RelayCommand(BrowseInstallLocation);

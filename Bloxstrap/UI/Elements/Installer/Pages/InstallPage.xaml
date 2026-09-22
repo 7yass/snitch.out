@@ -79,5 +79,23 @@
 
             <ui:InfoBar Grid.Row="2" Grid.ColumnSpan="2" Margin="0,8,0,0" Padding="8" Title="{x:Static resources:Strings.Installer_InstallationNotFound}" IsOpen="{Binding ShowNotFound, Mode=OneWay}" Severity="Warning" IsClosable="False" />
         </Grid>
+
+        <TextBlock FontSize="20" FontWeight="SemiBold" Text="Prerequisites" Margin="0,16,0,0" />
+        <TextBlock FontSize="14" Text="Everything snitch.out and Roblox need to run." TextWrapping="Wrap" />
+
+        <controls:OptionControl Margin="0,8,0,0"
+            Header="Operating system">
+            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding PrereqOsText, Mode=OneWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Margin="0,8,0,0"
+            Header="WebView2 runtime">
+            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding PrereqWebView2Text, Mode=OneWay}" TextWrapping="Wrap" />
+        </controls:OptionControl>
+
+        <controls:OptionControl Margin="0,8,0,0"
+            Header="Disk space">
+            <TextBlock VerticalAlignment="Center" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding PrereqDiskText, Mode=OneWay}" />
+        </controls:OptionControl>
     </StackPanel>
 </ui:UiPage>
