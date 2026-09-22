@@ -14,15 +14,17 @@ namespace Bloxstrap
     public partial class App : Application
     {
 #if QA_BUILD
-        public const string ProjectName = "Snitch-QA";
+        public const string ProjectName = "snitch.out-QA";
 #else
-        public const string ProjectName = "Snitch";
+        public const string ProjectName = "snitch.out";
 #endif
-        public const string ProjectOwner = "snitch";
-        public const string ProjectRepository = "snitch/snitch";
-        public const string ProjectDownloadLink = "https://github.com/returnrqt/fishstrap/releases";
+        public const string ProjectOwner = "7yass";
+        public const string ProjectRepository = "7yass/snitch.out";
+        public const string ProjectDownloadLink = "https://github.com/7yass/snitch.out/releases";
         public const string ProjectHelpLink = "https://github.com/bloxstraplabs/bloxstrap/wiki";
-        public const string ProjectSupportLink = "https://github.com/returnrqt/fishstrap/issues/new";
+        public const string ProjectSupportLink = "https://github.com/7yass/snitch.out/issues/new";
+        public const string ProjectHelpLink = "https://github.com/bloxstraplabs/bloxstrap/wiki";
+        public const string ProjectSupportLink = "https://github.com/7yass/snitch.out/issues/new";
         public const string ProjectRemoteDataLink = "https://config.fishstrap.app/v1/Data.json";
 
         public const string RobloxPlayerAppName = "RobloxPlayerBeta.exe";

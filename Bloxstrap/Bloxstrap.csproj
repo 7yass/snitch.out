@@ -12,7 +12,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
-	<AssemblyName>Snitch</AssemblyName>
+	<AssemblyName>snitch.out</AssemblyName>
     <Product>$(AssemblyName)</Product>
     <RootNamespace>Bloxstrap</RootNamespace>
   </PropertyGroup>
