@@ -1,8 +1,10 @@
 name: Publish to Winget
 
+# snitch.out is not on winget yet. To publish it, submit the package
+# identifier below to winget-pkgs once, add a WINGET_TOKEN secret, and
+# switch this trigger back to `release: types: [released]`.
 on:
-  release:
-    types: [released]
+  workflow_dispatch
 
 jobs:
   publish:
@@ -10,5 +12,5 @@ jobs:
     steps:
       - uses: vedantmgoyal9/winget-releaser@main
         with:
-          identifier: Fishstrap.Fishstrap
+          identifier: 7yass.snitch.out
           token: ${{ secrets.WINGET_TOKEN }}
