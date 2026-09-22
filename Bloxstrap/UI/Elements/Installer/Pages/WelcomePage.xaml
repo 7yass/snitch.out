@@ -18,7 +18,7 @@
       Loaded="UiPage_Loaded">
 
     <StackPanel Margin="0,0,14,14">
-        <Border Margin="0,0,0,16" CornerRadius="12" ClipToBounds="True" MaxWidth="480" HorizontalAlignment="Left">
+        <Border Margin="0,0,0,16" CornerRadius="12" ClipToBounds="True" MaxWidth="360" HorizontalAlignment="Left">
             <Image Source="pack://application:,,,/snitch-hero.jpg" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" />
         </Border>
         <controls:MarkdownTextBlock FontSize="14" MarkdownText="{Binding MainText, Mode=OneWay}" TextWrapping="Wrap" />
