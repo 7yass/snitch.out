@@ -929,22 +929,26 @@ namespace Bloxstrap
 
             logCreatedEvent.WaitOne(TimeSpan.FromSeconds(15));
 
-            if (String.IsNullOrEmpty(logFileName))
+            // snitch.out: studio presence needs no log file
+            if (!IsStudioLaunch)
             {
-                App.Logger.WriteLine(LOG_IDENT, "Unable to identify log file");
-                // Frontend.ShowPlayerErrorDialog();
-                return;
-            }
-            else
-            {
-                App.Logger.WriteLine(LOG_IDENT, $"Got log file as {logFileName}");
+                if (String.IsNullOrEmpty(logFileName))
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Unable to identify log file");
+                    // Frontend.ShowPlayerErrorDialog();
+                    return;
+                }
+                else
+                {
+                    App.Logger.WriteLine(LOG_IDENT, $"Got log file as {logFileName}");
+                }
             }
 
             _mutex?.ReleaseAsync();
 
-            if (IsStudioLaunch)
-                return;
-
+            // snitch.out: custom integrations stay player-only, watcher spawns for both
+            if (!IsStudioLaunch)
+            {
             // lord.... forgive me for this hack.....
             // launch custom integrations now
             foreach (var integration in App.Settings.Prop.CustomIntegrations)
@@ -980,6 +984,7 @@ namespace Bloxstrap
                 if (integration.AutoClose && pid != 0)
                     autoclosePids.Add(pid);
             }
+            }
 
             if (App.Settings.Prop.EnableActivityTracking || App.Settings.Prop.EnableWindowManipulation || App.LaunchSettings.TestModeFlag.Active || autoclosePids.Any())
             {
@@ -990,7 +995,8 @@ namespace Bloxstrap
                     ProcessId = _appPid,
                     LogFile = logFileName,
                     AutoclosePids = autoclosePids,
-                    Handle = _appWindowHandle.ToInt64()
+                    Handle = _appWindowHandle.ToInt64(),
+                    IsStudio = IsStudioLaunch
                 };
 
                 string watcherDataArg = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(watcherData)));

@@ -151,6 +151,25 @@ namespace Bloxstrap.UI.ViewModels.Settings
             set => App.Settings.Prop.ShowAccountOnRichPresence = value;
         }
 
+        // snitch.out: RPC extras
+        public string DiscordDetailsPrefix
+        {
+            get => App.Settings.Prop.RichPresenceDetailsPrefix;
+            set => App.Settings.Prop.RichPresenceDetailsPrefix = value ?? "";
+        }
+
+        public bool DiscordPlaytimeEnabled
+        {
+            get => App.Settings.Prop.ShowPlaytimeOnPresence;
+            set => App.Settings.Prop.ShowPlaytimeOnPresence = value;
+        }
+
+        public bool DiscordStudioEnabled
+        {
+            get => App.Settings.Prop.UseStudioPresence;
+            set => App.Settings.Prop.UseStudioPresence = value;
+        }
+
         public bool DisableAppPatchEnabled
         {
             get => App.Settings.Prop.UseDisableAppPatch;

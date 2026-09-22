@@ -78,6 +78,27 @@
             <ui:ToggleSwitch IsChecked="{Binding DiscordAccountOnProfile, Mode=TwoWay}" />
         </controls:OptionControl>
 
+        <controls:OptionControl
+            Header="Details prefix"
+            Description="Text prepended to the game name in your status. Empty = just the game name."
+            IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
+            <ui:TextBox Width="200" PlaceholderText="e.g. Playing " Text="{Binding DiscordDetailsPrefix, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
+            Header="Show playtime"
+            Description="Append session and total playtime to your status. Refreshes every minute."
+            IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
+            <ui:ToggleSwitch IsChecked="{Binding DiscordPlaytimeEnabled, Mode=TwoWay}" />
+        </controls:OptionControl>
+
+        <controls:OptionControl
+            Header="Studio presence"
+            Description="Show a Roblox Studio status while building, with a link to snitch.out."
+            IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
+            <ui:ToggleSwitch IsChecked="{Binding DiscordStudioEnabled, Mode=TwoWay}" />
+        </controls:OptionControl>
+
         <TextBlock Text="{x:Static resources:Strings.Common_WindowManipulation}" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
         <controls:OptionControl 
             Header="{x:Static resources:Strings.Menu_Integrations_EnableWindowManipulation_Title}"

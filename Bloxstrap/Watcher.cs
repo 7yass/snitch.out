@@ -17,6 +17,9 @@ namespace Bloxstrap
 
         public readonly DiscordRichPresence? RichPresence;
 
+        // snitch.out: wall-clock seconds for the watched process
+        private long _sessionSeconds = 0;
+
         public Watcher()
         {
             const string LOG_IDENT = "Watcher";
@@ -58,7 +61,16 @@ namespace Bloxstrap
             if (App.Settings.Prop.EnableWindowManipulation && _watcherData.Handle != 0)
                 WindowManipulation = new(_watcherData.Handle, _watcherData.ProcessId);
 
-            if (App.Settings.Prop.EnableActivityTracking)
+            // snitch.out: studio has no parseable activity log, presence only
+            if (_watcherData.IsStudio)
+            {
+                if (App.Settings.Prop.UseDiscordRichPresence && App.Settings.Prop.UseStudioPresence && !App.State.Prop.WatcherRunning)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Running studio rpc");
+                    RichPresence = new(null, studioMode: true);
+                }
+            }
+            else if (App.Settings.Prop.EnableActivityTracking)
             {
                 ActivityWatcher = new(_watcherData.LogFile);
 
@@ -121,7 +133,10 @@ namespace Bloxstrap
             WindowManipulation?.Start();
 
             while (Utilities.GetProcessesSafe().Any(x => x.Id == _watcherData.ProcessId))
+            {
                 await Task.Delay(1000);
+                _sessionSeconds++;
+            }
 
             AppStorageManager.Apply();
 
@@ -142,7 +157,10 @@ namespace Bloxstrap
             _notifyIcon?.Dispose();
             RichPresence?.Dispose();
 
+            // snitch.out: bank session wall time into lifetime total
+            App.State.Prop.TotalPlaytimeSeconds += _sessionSeconds;
             App.State.Prop.WatcherRunning = false;
+            App.State.Save();
 
             GC.SuppressFinalize(this);
         }

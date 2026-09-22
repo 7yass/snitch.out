@@ -60,6 +60,10 @@ namespace Bloxstrap.Models.Persistable
         public bool EnableActivityTracking { get; set; } = true;
         public bool UseDiscordRichPresence { get; set; } = true;
         public DiscordRPCStatusDisplay RichPresenceStatusDisplayType { get; set; } = DiscordRPCStatusDisplay.Name;
+        // snitch.out: RPC extras
+        public string RichPresenceDetailsPrefix { get; set; } = "";
+        public bool ShowPlaytimeOnPresence { get; set; } = false;
+        public bool UseStudioPresence { get; set; } = true;
         public bool HideRPCButtons { get; set; } = true;
         public bool ShowAccountOnRichPresence { get; set; } = false;
         public bool ShowServerDetails { get; set; } = false;

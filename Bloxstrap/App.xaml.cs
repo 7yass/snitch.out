@@ -27,6 +27,11 @@ namespace Bloxstrap
         public const string ProjectSupportLink = "https://github.com/7yass/snitch.out/issues/new";
         public const string ProjectRemoteDataLink = "https://raw.githubusercontent.com/7yass/snitch.out/main/Data.json";
 
+        // snitch.out: Discord application for Rich Presence.
+        // Create one at https://discord.com/developers/applications, upload
+        // your icon there, and paste its Application ID here.
+        public const string DiscordAppId = "1005469189907173486";
+
         public const string RobloxPlayerAppName = "RobloxPlayerBeta.exe";
         public const string RobloxStudioAppName = "RobloxStudioBeta.exe";
 

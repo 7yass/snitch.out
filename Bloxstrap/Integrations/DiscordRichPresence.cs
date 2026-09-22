@@ -6,30 +6,33 @@ namespace Bloxstrap.Integrations
 {
     public class DiscordRichPresence : IDisposable
     {
-        private readonly DiscordRpcClient _rpcClient = new("1005469189907173486");
-        private readonly ActivityWatcher _activityWatcher;
+        private readonly DiscordRpcClient _rpcClient = new(App.DiscordAppId);
+        private readonly ActivityWatcher? _activityWatcher;
         private readonly Queue<Message> _messageQueue = new();
 
-        private DiscordRPC.RichPresence? _currentPresence;
-        private DiscordRPC.RichPresence? _originalPresence;
+        // snitch.out: studio mode, details prefix, playtime
+        private readonly bool _studioMode;
+        private readonly DateTime _sessionStartUtc = DateTime.UtcNow;
+        private DateTime _playStartUtc = DateTime.UtcNow;
+        private string _statusBase = "";
+        private Timer? _refreshTimer;
 
-        private FixedSizeList<ThumbnailCacheEntry> _thumbnailCache = new FixedSizeList<ThumbnailCacheEntry>(20);
-
-        private ulong? _smallImgBeingFetched = null;
-        private ulong? _largeImgBeingFetched = null;
-        private CancellationTokenSource? _fetchThumbnailsToken;
-
-        private bool _visible = true;
-
-        public DiscordRichPresence(ActivityWatcher activityWatcher)
+        public DiscordRichPresence(ActivityWatcher? activityWatcher, bool studioMode = false)
         {
             const string LOG_IDENT = "DiscordRichPresence";
 
             _activityWatcher = activityWatcher;
+            _studioMode = studioMode;
 
-            _activityWatcher.OnGameJoin += (_, _) => Task.Run(() => SetCurrentGame());
-            _activityWatcher.OnGameLeave += (_, _) => Task.Run(() => SetCurrentGame());
-            _activityWatcher.OnRPCMessage += (_, message) => ProcessRPCMessage(message);
+            if (_activityWatcher is not null)
+            {
+                _activityWatcher.OnGameJoin += (_, _) => Task.Run(() => SetCurrentGame());
+                _activityWatcher.OnGameLeave += (_, _) => Task.Run(() => SetCurrentGame());
+                _activityWatcher.OnRPCMessage += (_, message) => ProcessRPCMessage(message);
+            }
+
+            if (_studioMode)
+                Task.Run(() => SetStudioPresence());
 
             _rpcClient.OnReady += (_, e) =>
                 App.Logger.WriteLine(LOG_IDENT, $"Received ready from user {e.User} ({e.User.ID})");
@@ -56,6 +59,9 @@ namespace Bloxstrap.Integrations
         public void ProcessRPCMessage(Message message, bool implicitUpdate = true)
         {
             const string LOG_IDENT = "DiscordRichPresence::ProcessRPCMessage";
+
+            if (_studioMode)
+                return;
 
             if (message.Command != "SetRichPresence" && message.Command != "SetLaunchData")
                 return;
@@ -324,7 +330,10 @@ namespace Bloxstrap.Integrations
         public async Task<bool> SetCurrentGame()
         {
             const string LOG_IDENT = "DiscordRichPresence::SetCurrentGame";
-            
+
+            if (_activityWatcher is null)
+                return false;
+
             if (!_activityWatcher.InGame)
             {
                 App.Logger.WriteLine(LOG_IDENT, "Not in game, clearing presence");
@@ -404,11 +413,15 @@ namespace Bloxstrap.Integrations
             if (universeName.Length < 2)
                 universeName = $"{universeName}\x2800\x2800\x2800";
 
+            // snitch.out: optional details prefix + playtime in state
+            _playStartUtc = timeStarted.ToUniversalTime();
+            _statusBase = status;
+
             _currentPresence = new DiscordRPC.RichPresence
             {
-                Details = universeName,
+                Details = Truncate(App.Settings.Prop.RichPresenceDetailsPrefix + universeName, 128),
                 StatusDisplay = App.Settings.Prop.RichPresenceStatusDisplayType.ToStatusDisplayType(),
-                State = status,
+                State = Truncate(BuildStateText(status, _playStartUtc), 128),
                 Timestamps = new Timestamps { Start = timeStarted.ToUniversalTime() },
                 Buttons = GetButtons(),
                 Assets = new Assets
@@ -428,14 +441,101 @@ namespace Bloxstrap.Integrations
                 App.Logger.WriteLine(LOG_IDENT, "Processing queued messages");
                 ProcessRPCMessage(_messageQueue.Dequeue(), false);
             }
-            
+
+            StartRefreshTimer();
             UpdatePresence();
 
             return true;
         }
 
+        // snitch.out: static presence for Roblox Studio (no log parsing there)
+        public void SetStudioPresence()
+        {
+            const string LOG_IDENT = "DiscordRichPresence::SetStudioPresence";
+
+            App.Logger.WriteLine(LOG_IDENT, "Setting Studio presence");
+
+            _playStartUtc = _sessionStartUtc;
+            _statusBase = "Building";
+
+            _currentPresence = new DiscordRPC.RichPresence
+            {
+                Details = Truncate(App.Settings.Prop.RichPresenceDetailsPrefix + "Roblox Studio", 128),
+                StatusDisplay = App.Settings.Prop.RichPresenceStatusDisplayType.ToStatusDisplayType(),
+                State = Truncate(BuildStateText(_statusBase, _playStartUtc), 128),
+                Timestamps = new Timestamps { Start = _sessionStartUtc },
+                Buttons = GetButtons(),
+                Assets = new Assets
+                {
+                    LargeImageKey = "roblox",
+                    LargeImageText = "Roblox Studio",
+                    SmallImageKey = "roblox",
+                    SmallImageText = "snitch.out"
+                }
+            };
+
+            _originalPresence = _currentPresence.Clone();
+
+            StartRefreshTimer();
+            UpdatePresence();
+        }
+
+        private static string Truncate(string value, int maxLength) =>
+            value.Length <= maxLength ? value : value[..maxLength];
+
+        private static string FormatDuration(TimeSpan span)
+        {
+            if (span.TotalHours >= 1)
+                return $"{(int)span.TotalHours}h {span.Minutes}m";
+
+            if (span.TotalMinutes >= 1)
+                return $"{(int)span.TotalMinutes}m";
+
+            return $"{(int)span.TotalSeconds}s";
+        }
+
+        private string BuildStateText(string status, DateTime playStartUtc)
+        {
+            if (!App.Settings.Prop.ShowPlaytimeOnPresence)
+                return status;
+
+            TimeSpan session = DateTime.UtcNow - playStartUtc;
+            TimeSpan total = TimeSpan.FromSeconds(App.State.Prop.TotalPlaytimeSeconds) + session;
+
+            return $"{status} · {FormatDuration(session)} session ({FormatDuration(total)} total)";
+        }
+
+        private void StartRefreshTimer()
+        {
+            if (!App.Settings.Prop.ShowPlaytimeOnPresence)
+                return;
+
+            _refreshTimer?.Dispose();
+            _refreshTimer = new Timer(_ =>
+            {
+                if (_currentPresence is null || !_visible)
+                    return;
+
+                _currentPresence.State = Truncate(BuildStateText(_statusBase, _playStartUtc), 128);
+                _rpcClient.SetPresence(_currentPresence);
+            }, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1));
+        }
+
         public Button[] GetButtons()
         {
+            // snitch.out: studio has no joinable server, link the project
+            if (_studioMode || _activityWatcher is null)
+            {
+                return new Button[]
+                {
+                    new Button
+                    {
+                        Label = "snitch.out on GitHub",
+                        Url = "https://github.com/7yass/snitch.out"
+                    }
+                };
+            }
+
             var buttons = new List<Button>();
 
             var data = _activityWatcher.Data;
@@ -488,6 +588,7 @@ namespace Bloxstrap.Integrations
         public void Dispose()
         {
             App.Logger.WriteLine("DiscordRichPresence::Dispose", "Cleaning up Discord RPC and Presence");
+            _refreshTimer?.Dispose();
             _rpcClient.ClearPresence();
             _rpcClient.Dispose();
             GC.SuppressFinalize(this);

@@ -16,6 +16,9 @@ namespace Bloxstrap.Models.Persistable
 
         public bool ForceReinstall { get; set; } = false;
 
+        // snitch.out: accumulated player+studio wall time in seconds
+        public long TotalPlaytimeSeconds { get; set; } = 0;
+
         public WindowState SettingsWindow { get; set; } = new();
 
         #region Deprecated properties

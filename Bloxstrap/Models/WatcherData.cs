@@ -9,5 +9,8 @@
         public List<int>? AutoclosePids { get; set; }
 
         public long Handle { get; set; }
+
+        // snitch.out: watcher is tracking Studio instead of the player
+        public bool IsStudio { get; set; }
     }
 }
