@@ -59,14 +59,8 @@ namespace Bloxstrap.Utility
                 return false;
             }
 
-            var answer = Frontend.ShowMessageBox(
-                $"snitch.out {release.TagName} is available (you have v{App.Version}). Download and install it now?",
-                MessageBoxImage.Question,
-                MessageBoxButton.YesNo
-            );
-
-            if (answer != MessageBoxResult.Yes)
-                return false;
+            // silent: download, swap the installed exe, relaunch
+            App.Logger.WriteLine(LOG_IDENT, $"Updating v{App.Version} -> {release.TagName}");
 
             return await DownloadAndApplyAsync(release);
         }
@@ -106,14 +100,7 @@ namespace Bloxstrap.Utility
 
             string shortSha = release.TargetCommitish.Length > 7 ? release.TargetCommitish[..7] : release.TargetCommitish;
 
-            var answer = Frontend.ShowMessageBox(
-                $"A newer nightly build is available ({shortSha}, you have {App.BuildMetadata.CommitHash}). Download and install it now?",
-                MessageBoxImage.Question,
-                MessageBoxButton.YesNo
-            );
-
-            if (answer != MessageBoxResult.Yes)
-                return false;
+            App.Logger.WriteLine(LOG_IDENT, $"Updating nightly {App.BuildMetadata.CommitHash} -> {shortSha}");
 
             return await DownloadAndApplyAsync(release);
         }
