@@ -70,7 +70,7 @@ namespace Bloxstrap.UI.ViewModels.Installer
         {
             get
             {
-                string? version = Utility.WebView2Util.GetVersion();
+                string? version = Bloxstrap.Utility.WebView2Util.GetVersion();
                 return version is null
                     ? "Not found - installed automatically with Roblox"
                     : $"Version {version}";
