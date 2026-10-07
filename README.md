@@ -5,7 +5,7 @@
 
 <div align="center">
 
-![](./banner.jpg)
+![](./banner.png)
 
 ![][badge-license]
 ![][badge-actions]
@@ -52,7 +52,7 @@ If you found any bugs, please [open an issue here][repo-new-issue].
 
 <div align="center">
 
-![](./banner.jpg)
+![](./banner.png)
 
 </div>
 

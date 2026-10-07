@@ -12,7 +12,11 @@ namespace Bloxstrap.Extensions
         public static ImageSource GetImageSource(this Icon icon, bool handleException = true)
         {
             using MemoryStream stream = new();
-            icon.Save(stream);
+
+            // snitch.out: decode the largest frame so small displays downscale
+            // instead of upscaling the 16px frame (Icon.Save orders ascending)
+            using Icon sized = new(icon, new Size(256, 256));
+            sized.Save(stream);
             stream.Seek(0, SeekOrigin.Begin);
 
             if (handleException)

@@ -77,8 +77,15 @@ namespace Bloxstrap
 
         public async Task<string?> SaveCurrentAsync()
         {
+            // snitch.out: the cookie file may have appeared after startup
+            // (first Roblox launch), so retry loading before giving up
             if (!App.Cookies.Loaded)
-                return "Enable account access first, then relaunch snitch.out.";
+            {
+                await App.Cookies.LoadCookies();
+
+                if (!App.Cookies.Loaded)
+                    return "Enable account access first, launch Roblox once, then relaunch snitch.out.";
+            }
 
             var user = await App.Cookies.GetAuthenticated();
 
