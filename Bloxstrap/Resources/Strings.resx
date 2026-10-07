@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Bootstrapper.AutoUpdateFailed" xml:space="preserve">
-    <value>Fishstrap was unable to automatically update to version {0}. Please update it manually by downloading and running it from the website.</value>
+    <value>snitch.out was unable to automatically update to version {0}. Please update it manually by downloading and running it from the website.</value>
   </data>
   <data name="Bootstrapper.ConfirmLaunch" xml:space="preserve">
     <value>Roblox is currently running, and launching another instance will close it. Are you sure you want to continue launching?</value>
@@ -127,16 +127,16 @@
     <value>Roblox may be down right now. See {0} for more information.</value>
   </data>
   <data name="Dialog.Connectivity.BadConnection" xml:space="preserve">
-    <value>A connection could not be made, which likely indicates a poor internet connection or a firewall block. If your connection is fine, please ensure that your antivirus isn't blocking Fishstrap.</value>
+    <value>A connection could not be made, which likely indicates a poor internet connection or a firewall block. If your connection is fine, please ensure that your antivirus isn't blocking snitch.out.</value>
   </data>
   <data name="Dialog.Connectivity.MatchmakingFailed" xml:space="preserve">
     <value>BetterMatchmaking will be disabled for this session.</value>
   </data>
   <data name="Bootstrapper.FirstRunUninstall" xml:space="preserve">
-    <value>You must first install Fishstrap before uninstalling.</value>
+    <value>You must first install snitch.out before uninstalling.</value>
   </data>
   <data name="Bootstrapper.NotEnoughSpace" xml:space="preserve">
-    <value>Fishstrap does not have enough disk space to download and install Roblox. Please free up some disk space and try again.</value>
+    <value>snitch.out does not have enough disk space to download and install Roblox. Please free up some disk space and try again.</value>
   </data>
   <data name="Bootstrapper.Status.ApplyingModifications" xml:space="preserve">
     <value>Applying Roblox modifications...</value>
@@ -172,10 +172,10 @@
     <comment>Text for style previews that use text button that says "Cancel"</comment>
   </data>
   <data name="Bootstrapper.SuccessfullyUninstalled" xml:space="preserve">
-    <value>Fishstrap has successfully uninstalled</value>
+    <value>snitch.out has successfully uninstalled</value>
   </data>
   <data name="Bootstrapper.Uninstall.RobloxRunning" xml:space="preserve">
-    <value>Roblox is currently running, but must be closed before uninstalling Fishstrap. Would you like to close Roblox now?</value>
+    <value>Roblox is currently running, but must be closed before uninstalling snitch.out. Would you like to close Roblox now?</value>
   </data>
   <data name="Bootstrapper.WMFNotFound" xml:space="preserve">
     <value>Roblox requires the use of Windows Media Foundation components. You appear to be missing them, likely because you are using an N edition of Windows. Please install them first, and then launch Roblox.</value>
@@ -287,14 +287,14 @@ Uptime: {1}</value>
     <value>Connectivity error</value>
   </data>
   <data name="Dialog.Connectivity.UnableToConnect" xml:space="preserve">
-    <value>Fishstrap is unable to connect to {0}</value>
+    <value>snitch.out is unable to connect to {0}</value>
     <comment>{0} is the name of a service (i.e. Roblox, GitHub)</comment>
   </data>
   <data name="Dialog.Exception.CopyLogContents" xml:space="preserve">
     <value>Copy log contents</value>
   </data>
   <data name="Dialog.Exception.Info.1" xml:space="preserve">
-    <value>An exception occurred while running Fishstrap/Bloxstrap</value>
+    <value>An exception occurred while running snitch.out/Bloxstrap</value>
   </data>
   <data name="Dialog.Exception.Info.2" xml:space="preserve">
     <value>Check the [Bloxstrap Wiki]({0}) first to see if this problem has already been addressed with a fix.
@@ -302,7 +302,7 @@ Uptime: {1}</value>
 If not, then please report this exception through a [GitHub issue]({1}) along with a copy of the log file that was created.</value>
   </data>
   <data name="Dialog.Exception.Title" xml:space="preserve">
-    <value>Fishstrap Exception</value>
+    <value>snitch.out Exception</value>
   </data>
   <data name="Common.Custom" xml:space="preserve">
     <value>Custom</value>
@@ -317,10 +317,10 @@ If not, then please report this exception through a [GitHub issue]({1}) along wi
     <value>Fake Byfron (2023)</value>
   </data>
   <data name="Enums.BootstrapperStyle.ClassicFluentDialog" xml:space="preserve">
-    <value>Fishstrap (Classic)</value>
+    <value>snitch.out (Classic)</value>
   </data>
   <data name="Enums.BootstrapperStyle.FluentAeroDialog" xml:space="preserve">
-    <value>Fishstrap (Glass)</value>
+    <value>snitch.out (Glass)</value>
   </data>
   <data name="Enums.BootstrapperStyle.LegacyDialog2008" xml:space="preserve">
     <value>Legacy (2008 - 2011)</value>
@@ -398,10 +398,10 @@ If not, then please report this exception through a [GitHub issue]({1}) along wi
     <value>Light</value>
   </data>
   <data name="InstallChecker.Updated" xml:space="preserve">
-    <value>Fishstrap has been upgraded to v{0}</value>
+    <value>snitch.out has been upgraded to v{0}</value>
   </data>
   <data name="InstallChecker.VersionDifferentThanInstalled" xml:space="preserve">
-    <value>The version of Fishstrap you've launched is different to the version you currently have installed.
+    <value>The version of snitch.out you've launched is different to the version you currently have installed.
 Would you like to upgrade your currently installed version?</value>
   </data>
   <data name="Menu.About.Contributors" xml:space="preserve">
@@ -411,7 +411,7 @@ Would you like to upgrade your currently installed version?</value>
     <value>Code</value>
   </data>
   <data name="Menu.About.Contributors.Description" xml:space="preserve">
-    <value>These are the people who have made notable contributions to Fishstrap/Bloxstrap, helping make it what it is.</value>
+    <value>These are the people who have made notable contributions to snitch.out/Bloxstrap, helping make it what it is.</value>
   </data>
   <data name="Menu.About.Contributors.FeatureIdeas" xml:space="preserve">
     <value>Feature Ideas</value>
@@ -420,7 +420,7 @@ Would you like to upgrade your currently installed version?</value>
     <value>Special Thanks</value>
   </data>
   <data name="Menu.About.Description" xml:space="preserve">
-    <value>A Fishstrap fork for version snapshot testing.</value>
+    <value>A snitch.out fork for version snapshot testing.</value>
   </data>
   <data name="Menu.About.DiscordServer" xml:space="preserve">
     <value>Discord server</value>
@@ -457,7 +457,7 @@ Would you like to upgrade your currently installed version?</value>
     <value>Please note that not all your changes will immediately apply until you close all currently open Roblox instances.</value>
   </data>
   <data name="Menu.AlreadyRunning.Title" xml:space="preserve">
-    <value>Fishstrap is already running</value>
+    <value>snitch.out is already running</value>
   </data>
   <data name="Menu.Appearance.Bootstrapper.Description" xml:space="preserve">
     <value>You can make it look different, retro, or even just like Roblox.</value>
@@ -484,7 +484,7 @@ Would you like to upgrade your currently installed version?</value>
     <value>Bootstrapper Title</value>
   </data>
   <data name="Menu.Appearance.Description" xml:space="preserve">
-    <value>Configure how Fishstrap should look.</value>
+    <value>Configure how snitch.out should look.</value>
   </data>
   <data name="Menu.Appearance.Global.Theme.Title" xml:space="preserve">
     <value>Global Theme</value>
@@ -508,10 +508,10 @@ Would you like to upgrade your currently installed version?</value>
     <value>Appearance</value>
   </data>
   <data name="Menu.Behaviour.AutoUpdate.Description" xml:space="preserve">
-    <value>Fishstrap will automatically check and update itself when launching Roblox.</value>
+    <value>snitch.out will automatically check and update itself when launching Roblox.</value>
   </data>
   <data name="Menu.Behaviour.AutoUpdate.Title" xml:space="preserve">
-    <value>Automatically update Fishstrap</value>
+    <value>Automatically update snitch.out</value>
   </data>
   <data name="Menu.Behaviour.ConfirmLaunches.Description" xml:space="preserve">
     <value>Prevent against closures of your existing game from accidentally launching another one.</value>
@@ -520,7 +520,7 @@ Would you like to upgrade your currently installed version?</value>
     <value>Prompt to confirm when launching another Roblox instance</value>
   </data>
   <data name="Menu.Behaviour.Description" xml:space="preserve">
-    <value>Configure what Fishstrap should do when launching Roblox.</value>
+    <value>Configure what snitch.out should do when launching Roblox.</value>
   </data>
   <data name="Menu.Behaviour.ForceRobloxReinstall.Description" xml:space="preserve">
     <value>Roblox will be installed fresh on next launch.</value>
@@ -640,10 +640,10 @@ Do NOT use this to import large "flag lists" made by other people that promise t
     <value>Icon files</value>
   </data>
   <data name="Menu.InstallLocation.CantInstall" xml:space="preserve">
-    <value>Fishstrap cannot be installed here. Please choose a different location, or resort to using the default location by clicking the reset button.</value>
+    <value>snitch.out cannot be installed here. Please choose a different location, or resort to using the default location by clicking the reset button.</value>
   </data>
   <data name="Menu.InstallLocation.NotEmpty" xml:space="preserve">
-    <value>The folder you've chosen to install Fishstrap to already exists and is NOT empty. It is strongly recommended for Fishstrap to be installed to its own independent folder.
+    <value>The folder you've chosen to install snitch.out to already exists and is NOT empty. It is strongly recommended for snitch.out to be installed to its own independent folder.
 
 Changing to the following location is suggested:
 {0}
@@ -656,7 +656,7 @@ Selecting 'No' will ignore this warning and continue installation.</value>
     <value>You must set an install location</value>
   </data>
   <data name="Menu.InstallLocation.NoWritePerms" xml:space="preserve">
-    <value>Fishstrap does not have write access to the install location you've selected. Please choose another location.</value>
+    <value>snitch.out does not have write access to the install location you've selected. Please choose another location.</value>
   </data>
   <data name="Menu.Integrations.ActivityTracking" xml:space="preserve">
     <value>Activity tracking</value>
@@ -707,7 +707,7 @@ Selecting 'No' will ignore this warning and continue installation.</value>
     <value>Don't exit to desktop app</value>
   </data>
   <data name="Menu.Integrations.EnableActivityTracking.Description" xml:space="preserve">
-    <value>Allows for Fishstrap to detect what Roblox game you're playing. Certain features may require this.</value>
+    <value>Allows for snitch.out to detect what Roblox game you're playing. Certain features may require this.</value>
   </data>
   <data name="Menu.Integrations.EnableActivityTracking.Title" xml:space="preserve">
     <value>Enable activity tracking</value>
@@ -829,7 +829,7 @@ Some text might not be translated to preferred language.</value>
     <value>User Interface and Layout</value>
   </data>
   <data name="Menu.FastFlags.ManagerEnabled.Title" xml:space="preserve">
-    <value>Allow Fishstrap to manage Fast Flags</value>
+    <value>Allow snitch.out to manage Fast Flags</value>
   </data>
   <data name="Menu.FastFlags.ManagerEnabled.Description" xml:space="preserve">
     <value>Disabling this will prevent anything configured here from being applied to Roblox.</value>
@@ -841,7 +841,7 @@ Some text might not be translated to preferred language.</value>
     <value>Stops it from showing whenever you move your mouse to the top of the screen.</value>
   </data>
   <data name="Dialog.Connectivity.UnableToDownload" xml:space="preserve">
-    <value>Fishstrap is unable to download Roblox</value>
+    <value>snitch.out is unable to download Roblox</value>
   </data>
   <data name="Dialog.Connectivity.UnableToDownloadReason" xml:space="preserve">
     <value>Roblox cannot be downloaded at this time. Please read the following help page for more information: {0}</value>
@@ -862,7 +862,7 @@ Some text might not be translated to preferred language.</value>
     <value>The entry for '{0}' is not valid as the value must be a number</value>
   </data>
   <data name="Logger.NoWriteMode" xml:space="preserve">
-    <value>No log file will be written for this launch because Fishstrap is unable to write to the folder at '{0}'</value>
+    <value>No log file will be written for this launch because snitch.out is unable to write to the folder at '{0}'</value>
   </data>
   <data name="Common.Default" xml:space="preserve">
     <value>Default</value>
@@ -985,7 +985,7 @@ snitch.out was installed at "{1}".</value>
     <value>You currently do not have the WebView2 runtime installed. Some Roblox features will not work properly without it, such as the desktop app. Would you like to download it now?</value>
   </data>
   <data name="Dialog.CannotCreateShortcuts" xml:space="preserve">
-    <value>Fishstrap was unable to create shortcuts for the Desktop and Start menu. Try creating them later through the settings.</value>
+    <value>snitch.out was unable to create shortcuts for the Desktop and Start menu. Try creating them later through the settings.</value>
   </data>
   <data name="Dialog.Exception.Info.2.Alt" xml:space="preserve">
     <value>Check the [Bloxstrap Wiki]({0}) first to see if this problem has already been addressed with a fix.
@@ -997,7 +997,7 @@ If not, then please report this exception to the maintainers of this fork. Do NO
     <value>These are general shortcuts that bring up a multi-choice launch menu. Shortcuts for specific functions can be created later in the settings.</value>
   </data>
   <data name="Menu.Shortcuts.Description" xml:space="preserve">
-    <value>Configure how Fishstrap can be readily launched.</value>
+    <value>Configure how snitch.out can be readily launched.</value>
   </data>
   <data name="Menu.Shortcuts.General.Title" xml:space="preserve">
     <value>General</value>
@@ -1037,7 +1037,7 @@ If not, then please report this exception to the maintainers of this fork. Do NO
     <value>You have unsaved changes. Are you sure you want to close without saving?</value>
   </data>
   <data name="InstallChecker.VersionLessThanInstalled" xml:space="preserve">
-    <value>The version of Fishstrap you've launched is older than the version you currently have installed.
+    <value>The version of snitch.out you've launched is older than the version you currently have installed.
 Issues may occur and your settings may be altered. A reinstall is recommended.
 Are you sure you want to continue?</value>
   </data>
@@ -1050,7 +1050,7 @@ Are you sure you want to continue?</value>
   <data name="Dialog.PlayerError.HelpInformation" xml:space="preserve">
     <value>For information about why this could be happening and how this can be resolved, please read [this help article]({0}).
 
-Check if Roblox works with [the original launcher]({1}). If it doesn't, then this isn't a Fishstrap issue. If it does, then refer to the help article.</value>
+Check if Roblox works with [the original launcher]({1}). If it doesn't, then this isn't a snitch.out issue. If it does, then refer to the help article.</value>
   </data>
   <data name="Common.NetworkError" xml:space="preserve">
     <value>Could not load data because of a network error.</value>
@@ -1059,10 +1059,10 @@ Check if Roblox works with [the original launcher]({1}). If it doesn't, then thi
     <value>Loading, please wait...</value>
   </data>
   <data name="About.Supporters.Title" xml:space="preserve">
-    <value>Fishstrap supporters</value>
+    <value>snitch.out supporters</value>
   </data>
   <data name="About.Supporters.Description" xml:space="preserve">
-    <value>These are the people who've supported Fishstrap through Ko-fi. A massive thank you to everyone here!
+    <value>These are the people who've supported snitch.out through Ko-fi. A massive thank you to everyone here!
 Every person here is ranked by their overall pledge.</value>
   </data>
   <data name="JsonManager.SettingsLoadFailed" xml:space="preserve">
@@ -1093,12 +1093,12 @@ Every person here is ranked by their overall pledge.</value>
     <value>For this launch, Roblox will not be checked for upgrades, and changes to mods will not be applied.</value>
   </data>
   <data name="Dialog.Connectivity.RobloxUpgradeNeeded" xml:space="preserve">
-    <value>Because Roblox needs to be installed or upgraded, Fishstrap cannot continue.</value>
+    <value>Because Roblox needs to be installed or upgraded, snitch.out cannot continue.</value>
   </data>
   <data name="Installer.Install.CannotOverwrite" xml:space="preserve">
-    <value>Fishstrap has been installed to this location before and is still present, however the installer cannot overwrite the old executable. 
+    <value>snitch.out has been installed to this location before and is still present, however the installer cannot overwrite the old executable. 
 
-Please manually delete Fishstrap.exe from the install location or try restarting your system, and then retry installation afterwards.</value>
+Please manually delete snitch.out.exe from the install location or try restarting your system, and then retry installation afterwards.</value>
   </data>
   <data name="Common.NotAvailable" xml:space="preserve">
     <value>Not available</value>
@@ -1110,7 +1110,7 @@ Please manually delete Fishstrap.exe from the install location or try restarting
     <value>Configure application parameters such as DPI scaling behaviour and [fullscreen optimizations]({0}).</value>
   </data>
   <data name="Common.RobloxNotInstalled" xml:space="preserve">
-    <value>Roblox has not yet been installed. Please launch Roblox using Fishstrap at least once before trying to use this option.</value>
+    <value>Roblox has not yet been installed. Please launch Roblox using snitch.out at least once before trying to use this option.</value>
   </data>
   <data name="Installer.ShouldCancel" xml:space="preserve">
     <value>Are you sure you want to cancel the installation?</value>
@@ -1128,10 +1128,10 @@ Please manually delete Fishstrap.exe from the install location or try restarting
     <value>Extract Roblox icons to folder</value>
   </data>
   <data name="Menu.Shortcuts.ExtractIcons.Description" xml:space="preserve">
-    <value>Allows you to use Fishstrap's range of Roblox icons for your shortcuts. [See how.]({0})</value>
+    <value>Allows you to use snitch.out's range of Roblox icons for your shortcuts. [See how.]({0})</value>
   </data>
   <data name="Dialog.RegistryWriteError" xml:space="preserve">
-    <value>Fishstrap is unable to write to the Windows Registry. An antivirus is likely interfering and causing issues. Please check to make sure there isn't anything that would restrict Fishstrap's operation.</value>
+    <value>snitch.out is unable to write to the Windows Registry. An antivirus is likely interfering and causing issues. Please check to make sure there isn't anything that would restrict snitch.out's operation.</value>
   </data>
   <data name="About.Supporters.Monthly" xml:space="preserve">
     <value>Monthly</value>
@@ -1160,7 +1160,7 @@ While enabled, it will automatically launch Roblox after closing Settings, and r
 Would you like to enable test mode?</value>
   </data>
   <data name="About.Translators.Description" xml:space="preserve">
-    <value>All of Fishstrap's translations are crowdsourced through [Crowdin]({0}). Everyone listed here are people who generously volunteered their time and effort to help localise Fishstrap. A massive thank you to everyone here!</value>
+    <value>All of snitch.out's translations are crowdsourced through [Crowdin]({0}). Everyone listed here are people who generously volunteered their time and effort to help localise snitch.out. A massive thank you to everyone here!</value>
   </data>
   <data name="Common.Navigation.Install" xml:space="preserve">
     <value>Install</value>
@@ -1199,7 +1199,7 @@ Would you like to enable test mode?</value>
     <value>Custom</value>
   </data>
   <data name="Bootstrapper.FilesInUse" xml:space="preserve">
-    <value>Fishstrap tried to upgrade Roblox but can't because Roblox's files are still in use.
+    <value>snitch.out tried to upgrade Roblox but can't because Roblox's files are still in use.
 
 Please close any applications that may be using Roblox's files, and relaunch.</value>
     <comment>This is *not* for when Roblox is still running when trying to upgrade. This applies to files being open (i.e. image assets)</comment>
@@ -1210,7 +1210,7 @@ Please close any applications that may be using Roblox's files, and relaunch.</v
   </data>
   <data name="Common.Export" xml:space="preserve">
     <value>Export</value>
-    <comment>Currently used under the "Fishstrap" settings tab for the button to export diagnostic data</comment>
+    <comment>Currently used under the "snitch.out" settings tab for the button to export diagnostic data</comment>
   </data>
   <data name="Dialog.Connectivity.Preventing" xml:space="preserve">
     <value />
@@ -1219,7 +1219,7 @@ Please close any applications that may be using Roblox's files, and relaunch.</v
     <value />
   </data>
   <data name="Menu.Channel.Description" xml:space="preserve">
-    <value>Change deployment and installation settings for Roblox &amp; Fishstrap.</value>
+    <value>Change deployment and installation settings for Roblox &amp; snitch.out.</value>
   </data>
   <data name="Common.Channel" xml:space="preserve">
     <value>Channel</value>
@@ -1282,7 +1282,7 @@ Please close any applications that may be using Roblox's files, and relaunch.</v
     <value>Version hash</value>
   </data>
   <data name="Menu.Channel.VersionHash.Desription" xml:space="preserve">
-    <value>Force Fishstrap to download version from specific hash. Please do not change if you have no idea what this does.</value>
+    <value>Force snitch.out to download version from specific hash. Please do not change if you have no idea what this does.</value>
   </data>
   <data name="Menu.SaveAndLaunch" xml:space="preserve">
     <value>Save and Launch</value>
@@ -1301,7 +1301,7 @@ Please close any applications that may be using Roblox's files, and relaunch.</v
     <value>Sorry</value>
   </data>
   <data name="Dialog.Bloxshade.Setting" xml:space="preserve">
-    <value>Fishstrap no longer supports Bloxshade.
+    <value>snitch.out no longer supports Bloxshade.
 For more information join Bloxshade discord server.</value>
   </data>
   <data name="Common.Profiles" xml:space="preserve">
@@ -1318,7 +1318,7 @@ Would you like to switch to the default channel ({1})?</value>
     <value>Automatic channel change action</value>
   </data>
   <data name="Menu.Channel.ChangeAction.Description" xml:space="preserve">
-    <value>Roblox or Fishstrap may try to change your preferred channel.</value>
+    <value>Roblox or snitch.out may try to change your preferred channel.</value>
   </data>
   <data name="Menu.Channel.ChangeAction.Automatic" xml:space="preserve">
     <value>Change automatically</value>
@@ -1362,16 +1362,16 @@ Would you like to switch your preferred channel to {0}?</value>
     <value>Bloxstrap installation was not found.</value>
   </data>
   <data name="Bootstrapper.Status.UpgradingBloxstrap" xml:space="preserve">
-    <value>Getting the latest Fishstrap...</value>
+    <value>Getting the latest snitch.out...</value>
   </data>
   <data name="Menu.Fishstrap.Description" xml:space="preserve">
-    <value>Configure options related to Fishstrap's behaviour itself.</value>
+    <value>Configure options related to snitch.out's behaviour itself.</value>
   </data>
   <data name="Menu.Fishstrap.Analytics.Title" xml:space="preserve">
-    <value>Enable sending of analytics to Fishstrap</value>
+    <value>Enable sending of analytics to snitch.out</value>
   </data>
   <data name="Menu.Fishstrap.Analytics.Description" xml:space="preserve">
-    <value>It's anonymous and nothing evil, promise. For insight on what Fishstrap collects and why, see Fishstrap's [privacy policy]({0}).</value>
+    <value>It's anonymous and nothing evil, promise. For insight on what snitch.out collects and why, see snitch.out's [privacy policy]({0}).</value>
   </data>
   <data name="Menu.Fishstrap.ExportData.Title" xml:space="preserve">
     <value>Export diagnostic data</value>
@@ -1380,18 +1380,18 @@ Would you like to switch your preferred channel to {0}?</value>
     <value>Gather information that can be uploaded online to troubleshoot a problem you're having.</value>
   </data>
   <data name="Menu.Fishstrap.ExportData.ExportConfig" xml:space="preserve">
-    <value>Fishstrap configuration</value>
+    <value>snitch.out configuration</value>
     <comment>Label that appears next to a checkbox</comment>
   </data>
   <data name="Menu.Fishstrap.ExportData.ExportLogs" xml:space="preserve">
-    <value>All Fishstrap logs</value>
+    <value>All snitch.out logs</value>
     <comment>Label that appears next to a checkbox</comment>
   </data>
   <data name="Menu.Bootstrapper.CleanUp.Title" xml:space="preserve">
     <value>Cleaner</value>
   </data>
   <data name="Menu.Bootstrapper.CleanUp.Description" xml:space="preserve">
-    <value>Fishstrap will remove old data to save on space</value>
+    <value>snitch.out will remove old data to save on space</value>
   </data>
   <data name="Enums.CleanerOptions.Never" xml:space="preserve">
     <value>Never</value>
@@ -1436,10 +1436,10 @@ Would you like to switch your preferred channel to {0}?</value>
     <value>Old log files will be deleted.</value>
   </data>
   <data name="Menu.Bootstrapper.Cleaner.IncludeBloxstrap.Title" xml:space="preserve">
-    <value>Fishstrap logs</value>
+    <value>snitch.out logs</value>
   </data>
   <data name="Menu.Bootstrapper.Cleaner.IncludeBloxstrap.Description" xml:space="preserve">
-    <value>Fishstrap logs will be deleted.</value>
+    <value>snitch.out logs will be deleted.</value>
   </data>
   <data name="Enums.CustomThemeTemplate.Blank" xml:space="preserve">
     <value>Blank</value>
@@ -1647,7 +1647,7 @@ Defaulting to {1}.</value>
     <value>Create New</value>
   </data>
   <data name="Menu.Bloxstrap.Description" xml:space="preserve">
-    <value>Configure options related to Fishstrap's behaviour itself.</value>
+    <value>Configure options related to snitch.out's behaviour itself.</value>
   </data>
   <data name="Menu.Behaviour.BackgroundUpdates.Title" xml:space="preserve">
     <value>Background updates</value>
@@ -1665,7 +1665,7 @@ Defaulting to {1}.</value>
     <value>FastFlags have been temporarily disabled</value>
   </data>
   <data name="Menu.FastFlagsDisabled.Description" xml:space="preserve">
-    <value>For more information join Fishstrap Discord server</value>
+    <value>For more information join snitch.out Discord server</value>
   </data>
   <data name="Bootstrapper.Status.WaitingForData" xml:space="preserve">
     <value>Waiting for data</value>
@@ -1707,13 +1707,13 @@ Defaulting to {1}.</value>
     <value>Unlock framerate limit for Roblox. Going above 240 FPS is not recommended.</value>
   </data>
   <data name="About.Title" xml:space="preserve">
-    <value>About Fishstrap</value>
+    <value>About snitch.out</value>
   </data>
   <data name="Common.GlobalSettings" xml:space="preserve">
     <value>Global Settings</value>
   </data>
   <data name="Menu.GBSEditor.Description" xml:space="preserve">
-    <value>Set in-game settings from Fishstrap menu.</value>
+    <value>Set in-game settings from snitch.out menu.</value>
   </data>
   <data name="Menu.GBSEditor.UITransparency.Title" xml:space="preserve">
     <value>Transparency</value>
@@ -1764,10 +1764,10 @@ Defaulting to {1}.</value>
     <value>Choose the FRM quality that Roblox should use.</value>
   </data>
   <data name="Menu.Bootstrapper.AllowCookieAccess.Title" xml:space="preserve">
-    <value>Allow Fishstrap to access your Roblox account</value>
+    <value>Allow snitch.out to access your Roblox account</value>
   </data>
   <data name="Menu.Bootstrapper.AllowCookieAccess.Description" xml:space="preserve">
-    <value>Provide access to Roblox APIs using your authentication cookie. [What will Fishstrap access?]({0})</value>
+    <value>Provide access to Roblox APIs using your authentication cookie. [What will snitch.out access?]({0})</value>
   </data>
   <data name="Common.Timestamp" xml:space="preserve">
     <value>Timestamp</value>
@@ -1776,7 +1776,7 @@ Defaulting to {1}.</value>
     <value>Roblox domain</value>
   </data>
   <data name="Menu.Channel.RobloxDomain.Description" xml:space="preserve">
-    <value>Set what domain Roblox and Fishstrap will use. Enter only trusted domains.</value>
+    <value>Set what domain Roblox and snitch.out will use. Enter only trusted domains.</value>
   </data>
   <data name="Enums.BootstrapperStyle.TwentyFiveDialog" xml:space="preserve">
     <value>Roblox (~2025)</value>
@@ -1788,7 +1788,7 @@ Defaulting to {1}.</value>
     <value>Enable BetterMatchmaking</value>
   </data>
   <data name="Bootstrapper.Experimental.BetterMatchmaking.Description" xml:space="preserve">
-    <value>Let Fishstrap decide which servers you join. Prioritizes the server with the shortest distance to you.</value>
+    <value>Let snitch.out decide which servers you join. Prioritizes the server with the shortest distance to you.</value>
   </data>
   <data name="Bootstrapper.Experimental.BetterMatchmaking.RandomizeServer.Title" xml:space="preserve">
     <value>Randomize BetterMatchmaking server</value>
@@ -1843,7 +1843,7 @@ Please don't change this setting unless you know what you're doing.</value>
     <value>Enable window manipulation</value>
   </data>
   <data name="Menu.Integrations.EnableWindowManipulation.Description" xml:space="preserve">
-    <value>Allows Fishstrap to access Roblox's window handle allowing for better customization and features.</value>
+    <value>Allows snitch.out to access Roblox's window handle allowing for better customization and features.</value>
   </data>
   <data name="Menu.Integrations.FakeVulkanBorderless.Title" xml:space="preserve">
     <value>Enable Borderless Fullscreen for Vulkan</value>
