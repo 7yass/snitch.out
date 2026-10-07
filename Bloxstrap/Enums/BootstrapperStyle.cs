@@ -10,7 +10,7 @@
         TwentyFiveDialog,
         TerminalDialog,
         ByfronDialog,
-        [EnumName(StaticName = "Fishstrap")]
+        [EnumName(StaticName = "snitch")]
         FluentDialog,
         FluentAeroDialog,
         CustomDialog

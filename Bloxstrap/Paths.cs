@@ -40,6 +40,15 @@
         public static string CustomCursor => Path.Combine(Modifications, "content\\textures\\Cursors\\KeyboardMouse\\ArrowCursor.png");
         public static string CustomFarCursor => Path.Combine(Modifications, "content\\textures\\Cursors\\KeyboardMouse\\ArrowFarCursor.png");
 
+        // snitch.out: Froststrap-style targeted mod folders.
+        // Modifications/ root applies to both clients; Player/ and Studio/
+        // apply to that client only (and win on conflicts); Disabled/ is ignored.
+        public static string PlayerModifications => Path.Combine(Modifications, "Player");
+        public static string StudioModifications => Path.Combine(Modifications, "Studio");
+        public static string DisabledModifications => Path.Combine(Modifications, "Disabled");
+
+        public static readonly string[] ReservedModFolders = new[] { "Player", "Studio", "Disabled" };
+
         public static bool Initialized => !String.IsNullOrEmpty(Base);
 
         public static void Initialize(string baseDirectory)

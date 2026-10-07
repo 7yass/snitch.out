@@ -1559,6 +1559,89 @@ namespace Bloxstrap
             Process.Start(Paths.Process, "-backgroundupdater");
         }
 
+        // snitch.out: shared mods are everything under Modifications/
+        // except the reserved target folders (Player, Studio, Disabled)
+        internal static IEnumerable<string> EnumerateSharedModFiles()
+        {
+            if (!Directory.Exists(Paths.Modifications))
+                yield break;
+
+            foreach (string file in Directory.GetFiles(Paths.Modifications))
+                yield return file;
+
+            foreach (string dir in Directory.GetDirectories(Paths.Modifications))
+            {
+                if (Paths.ReservedModFolders.Contains(Path.GetFileName(dir), StringComparer.OrdinalIgnoreCase))
+                    continue;
+
+                foreach (string file in Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories))
+                    yield return file;
+            }
+        }
+
+        // returns false when installation was cancelled
+        private bool ApplyModFile(string modRoot, string file, List<string> modFolderFiles, ref bool success)
+        {
+            const string LOG_IDENT = "Bootstrapper::ApplyModifications";
+
+            if (_cancelTokenSource.IsCancellationRequested)
+                return false;
+
+            // get relative directory path
+            string relativeFile = file.Substring(modRoot.Length + 1);
+
+            // v1.7.0 - README has been moved to the preferences menu now
+            if (relativeFile == "README.txt")
+            {
+                File.Delete(file);
+                return true;
+            }
+
+            if (!App.Settings.Prop.UseFastFlagManager && String.Equals(relativeFile, "ClientSettings\\ClientAppSettings.json", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (relativeFile.EndsWith(".lock"))
+                return true;
+
+            bool isBlacklisted = relativeFile.Contains("content\\avatar\\heads") || relativeFile.Contains("content\\avatar\\compositing") || relativeFile.Contains("content\\avatar\\meshes");
+
+            if (relativeFile.EndsWith(".mesh") && isBlacklisted)
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"Skipping file: {relativeFile}");
+                return true;
+            }
+
+            if (!modFolderFiles.Contains(relativeFile))
+                modFolderFiles.Add(relativeFile);
+
+            string fileModFolder = Path.Combine(modRoot, relativeFile);
+            string fileVersionFolder = Path.Combine(_latestVersionDirectory, relativeFile);
+
+            if (File.Exists(fileVersionFolder) && MD5Hash.FromFile(fileModFolder) == MD5Hash.FromFile(fileVersionFolder))
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"{relativeFile} already exists in the version folder, and is a match");
+                return true;
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(fileVersionFolder)!);
+
+            Filesystem.AssertReadOnly(fileVersionFolder);
+            try
+            {
+                File.Copy(fileModFolder, fileVersionFolder, true);
+                Filesystem.AssertReadOnly(fileVersionFolder);
+                App.Logger.WriteLine(LOG_IDENT, $"{relativeFile} has been copied to the version folder");
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"Failed to apply modification ({relativeFile})");
+                App.Logger.WriteException(LOG_IDENT, ex);
+                success = false;
+            }
+
+            return true;
+        }
+
         private async Task<bool> ApplyModifications()
         {
             const string LOG_IDENT = "Bootstrapper::ApplyModifications";
@@ -1648,60 +1731,22 @@ namespace Bloxstrap
                 );
             }
 
-            foreach (string file in Directory.GetFiles(Paths.Modifications, "*.*", SearchOption.AllDirectories))
+            foreach (string file in EnumerateSharedModFiles())
             {
-                if (_cancelTokenSource.IsCancellationRequested)
+                if (!ApplyModFile(Paths.Modifications, file, modFolderFiles, ref success))
                     return true;
+            }
 
-                // get relative directory path
-                string relativeFile = file.Substring(Paths.Modifications.Length + 1);
+            // snitch.out: Froststrap-style targeted mods for this client.
+            // Applied after shared mods so they win on conflicts.
+            string targetedDir = IsStudioLaunch ? Paths.StudioModifications : Paths.PlayerModifications;
 
-                // v1.7.0 - README has been moved to the preferences menu now
-                if (relativeFile == "README.txt")
+            if (Directory.Exists(targetedDir))
+            {
+                foreach (string file in Directory.GetFiles(targetedDir, "*.*", SearchOption.AllDirectories))
                 {
-                    File.Delete(file);
-                    continue;
-                }
-
-                if (!App.Settings.Prop.UseFastFlagManager && String.Equals(relativeFile, "ClientSettings\\ClientAppSettings.json", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                if (relativeFile.EndsWith(".lock"))
-                    continue;
-
-                bool isBlacklisted = relativeFile.Contains("content\\avatar\\heads") || relativeFile.Contains("content\\avatar\\compositing") || relativeFile.Contains("content\\avatar\\meshes");
-
-                if (relativeFile.EndsWith(".mesh") && isBlacklisted)
-                {
-                    App.Logger.WriteLine(LOG_IDENT, $"Skipping file: {relativeFile}");
-                    continue;
-                }
-
-                modFolderFiles.Add(relativeFile);
-
-                string fileModFolder = Path.Combine(Paths.Modifications, relativeFile);
-                string fileVersionFolder = Path.Combine(_latestVersionDirectory, relativeFile);
-
-                if (File.Exists(fileVersionFolder) && MD5Hash.FromFile(fileModFolder) == MD5Hash.FromFile(fileVersionFolder))
-                {
-                    App.Logger.WriteLine(LOG_IDENT, $"{relativeFile} already exists in the version folder, and is a match");
-                    continue;
-                }
-
-                Directory.CreateDirectory(Path.GetDirectoryName(fileVersionFolder)!);
-
-                Filesystem.AssertReadOnly(fileVersionFolder);
-                try
-                {
-                    File.Copy(fileModFolder, fileVersionFolder, true);
-                    Filesystem.AssertReadOnly(fileVersionFolder);
-                    App.Logger.WriteLine(LOG_IDENT, $"{relativeFile} has been copied to the version folder");
-                }
-                catch (Exception ex)
-                {
-                    App.Logger.WriteLine(LOG_IDENT, $"Failed to apply modification ({relativeFile})");
-                    App.Logger.WriteException(LOG_IDENT, ex);
-                    success = false;
+                    if (!ApplyModFile(targetedDir, file, modFolderFiles, ref success))
+                        return true;
                 }
             }
 

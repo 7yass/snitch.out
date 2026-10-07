@@ -9,7 +9,7 @@ namespace Bloxstrap.Models.Persistable
         public bool AllowCookieAccess { get; set; } = false;
 
         // bloxstrap configuration
-        public BootstrapperStyle BootstrapperStyle { get; set; } = BootstrapperStyle.FluentAeroDialog;
+        public BootstrapperStyle BootstrapperStyle { get; set; } = BootstrapperStyle.CustomDialog;
         public BootstrapperIcon BootstrapperIcon { get; set; } = BootstrapperIcon.IconBloxstrap;
         public string BootstrapperTitle { get; set; } = App.ProjectName;
         public string BootstrapperIconCustomLocation { get; set; } = "";
@@ -36,7 +36,7 @@ namespace Bloxstrap.Models.Persistable
         public string Channel { get; set; } = RobloxInterfaces.Deployment.DefaultChannel;
         public string RobloxDomain { get; set; } = RobloxInterfaces.Deployment.DefaultRobloxDomain;
         public ChannelChangeMode ChannelChangeMode { get; set; } = ChannelChangeMode.Automatic;
-        public string? SelectedCustomTheme { get; set; } = null;
+        public string? SelectedCustomTheme { get; set; } = Utility.ThemeSeeder.BuiltInThemeName;
         public bool BackgroundUpdatesEnabled { get; set; } = false;
         // snitch.out: multi-instance support
         public bool AllowMultiInstance { get; set; } = false;

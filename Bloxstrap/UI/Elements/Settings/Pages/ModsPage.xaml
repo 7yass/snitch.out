@@ -48,6 +48,45 @@
             </ui:CardAction>
         </Grid>
 
+        <TextBlock Text="Mod files" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
+        <TextBlock FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap">
+            Move files between Both, Player-only, Studio-only, or Disabled. Targeted mods win when files overlap. Applies on next launch.
+        </TextBlock>
+
+        <Grid Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ListBox Grid.Column="0" Margin="0,0,8,0" MinHeight="140" MaxHeight="260"
+                     ItemsSource="{Binding ModFiles, Mode=OneWay}" SelectedItem="{Binding SelectedModFile, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" FontSize="13" Text="{Binding RelativePath}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="1" Margin="12,0,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding Target}" VerticalAlignment="Center" />
+                            <TextBlock Grid.Column="2" Margin="12,0,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding SizeText}" VerticalAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Grid.Column="1" Width="150">
+                <ui:Button Margin="0,0,0,8" Icon="ArrowCounterclockwise24" Content="Refresh" HorizontalAlignment="Stretch" Command="{Binding RefreshModsCommand, Mode=OneTime}" />
+                <ui:Button Margin="0,0,0,8" Content="Both" HorizontalAlignment="Stretch" Command="{Binding MoveModToSharedCommand, Mode=OneTime}" />
+                <ui:Button Margin="0,0,0,8" Content="Player" HorizontalAlignment="Stretch" Command="{Binding MoveModToPlayerCommand, Mode=OneTime}" />
+                <ui:Button Margin="0,0,0,8" Content="Studio" HorizontalAlignment="Stretch" Command="{Binding MoveModToStudioCommand, Mode=OneTime}" />
+                <ui:Button Margin="0,0,0,8" Content="Disable" HorizontalAlignment="Stretch" Command="{Binding MoveModToDisabledCommand, Mode=OneTime}" />
+                <ui:Button Margin="0,0,0,8" Icon="Delete16" Content="Delete" HorizontalAlignment="Stretch" Appearance="Danger" Command="{Binding DeleteModCommand, Mode=OneTime}" />
+            </StackPanel>
+        </Grid>
+
         <TextBlock Text="{x:Static resources:Strings.Common_Presets}" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
 
         <controls:OptionControl 

@@ -312,6 +312,9 @@ namespace Bloxstrap
             {
                 Paths.Initialize(installLocation);
 
+                // snitch.out: make sure the built-in launcher theme exists
+                Utility.ThemeSeeder.EnsureBuiltInTheme();
+
                 // ensure executable is in the install directory
                 if (Paths.Process != Paths.Application && !File.Exists(Paths.Application))
                     File.Copy(Paths.Process, Paths.Application);

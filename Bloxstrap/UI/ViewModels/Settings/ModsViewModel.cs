@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 using Microsoft.Win32;
 
@@ -106,6 +107,134 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public CursorFileModPresetTask CustomCursorTask { get; } = new();
 
+        // snitch.out: Froststrap-style mod file list with per-client targeting
+        public ObservableCollection<ModFileRow> ModFiles { get; } = new();
+
+        public ModFileRow? SelectedModFile { get; set; }
+
+        public ICommand RefreshModsCommand => new RelayCommand(RefreshMods);
+        public ICommand MoveModToSharedCommand => new RelayCommand(() => MoveSelectedMod("Both"));
+        public ICommand MoveModToPlayerCommand => new RelayCommand(() => MoveSelectedMod("Player"));
+        public ICommand MoveModToStudioCommand => new RelayCommand(() => MoveSelectedMod("Studio"));
+        public ICommand MoveModToDisabledCommand => new RelayCommand(() => MoveSelectedMod("Disabled"));
+        public ICommand DeleteModCommand => new RelayCommand(DeleteSelectedMod);
+
+        private static string ModRootFor(string target) => target switch
+        {
+            "Player" => Paths.PlayerModifications,
+            "Studio" => Paths.StudioModifications,
+            "Disabled" => Paths.DisabledModifications,
+            _ => Paths.Modifications
+        };
+
+        private static string TargetForPath(string fullPath)
+        {
+            string root = Paths.Modifications + Path.DirectorySeparatorChar;
+            string relative = fullPath.StartsWith(root) ? fullPath[root.Length..] : fullPath;
+
+            foreach (string reserved in new[] { "Player", "Studio", "Disabled" })
+            {
+                if (relative.StartsWith(reserved + Path.DirectorySeparatorChar) || relative == reserved)
+                    return reserved;
+            }
+
+            return "Both";
+        }
+
+        private static string RelativeForTarget(string fullPath, string target)
+        {
+            if (target == "Both")
+                return fullPath[(Paths.Modifications.Length + 1)..];
+
+            string root = ModRootFor(target);
+            return fullPath[(root.Length + 1)..];
+        }
+
+        public void RefreshMods()
+        {
+            ModFiles.Clear();
+
+            if (!Directory.Exists(Paths.Modifications))
+                return;
+
+            var files = Bloxstrap.Bootstrapper.EnumerateSharedModFiles()
+                .Select(x => (Path: x, Target: "Both"));
+
+            foreach (string reserved in new[] { "Player", "Studio", "Disabled" })
+            {
+                string dir = ModRootFor(reserved);
+
+                if (Directory.Exists(dir))
+                    files = files.Concat(Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories)
+                        .Select(x => (Path: x, Target: reserved)));
+            }
+
+            foreach (var entry in files.OrderBy(x => x.Path))
+            {
+                var info = new FileInfo(entry.Path);
+
+                ModFiles.Add(new ModFileRow
+                {
+                    FullPath = entry.Path,
+                    RelativePath = RelativeForTarget(entry.Path, entry.Target),
+                    Target = entry.Target,
+                    SizeText = FileSize.ByteSize(info.Length)
+                });
+            }
+        }
+
+        private void MoveSelectedMod(string target)
+        {
+            if (SelectedModFile is null)
+                return;
+
+            string relative = RelativeForTarget(SelectedModFile.FullPath, SelectedModFile.Target);
+            string dest = Path.Combine(ModRootFor(target), relative);
+
+            if (String.Equals(SelectedModFile.FullPath, dest, StringComparison.OrdinalIgnoreCase))
+                return;
+
+            try
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
+                File.Move(SelectedModFile.FullPath, dest, true);
+            }
+            catch (Exception ex)
+            {
+                Frontend.ShowMessageBox($"Could not move mod file: {ex.Message}", MessageBoxImage.Error);
+                return;
+            }
+
+            RefreshMods();
+        }
+
+        private void DeleteSelectedMod()
+        {
+            if (SelectedModFile is null)
+                return;
+
+            var result = Frontend.ShowMessageBox(
+                $"Delete mod file '{SelectedModFile.RelativePath}'? The original will be restored on next launch.",
+                MessageBoxImage.Question,
+                MessageBoxButton.YesNo
+            );
+
+            if (result != MessageBoxResult.Yes)
+                return;
+
+            try
+            {
+                File.Delete(SelectedModFile.FullPath);
+            }
+            catch (Exception ex)
+            {
+                Frontend.ShowMessageBox($"Could not delete mod file: {ex.Message}", MessageBoxImage.Error);
+                return;
+            }
+
+            RefreshMods();
+        }
+
         private static readonly byte[] PngHeader = new byte[8] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
 
         private static bool IsValidAudio(string path)
@@ -192,6 +321,11 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public Visibility DeleteCustomCursorVisibility => !String.IsNullOrEmpty(CustomCursorTask.NewState) ? Visibility.Visible : Visibility.Collapsed;
 
         public ICommand ManageCustomCursorCommand => new RelayCommand(ManageCustomCursor);
+
+        public ModsViewModel()
+        {
+            RefreshMods();
+        }
 
         private void OpenCompatSettings()
         {
