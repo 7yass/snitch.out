@@ -66,13 +66,13 @@ namespace Bloxstrap.UI.ViewModels.Settings
             }
         }
 
-        public ICommand SaveCurrentCommand { get; }
+        public ICommand SaveCurrentCommand => new RelayCommand(async () => await SaveCurrent());
+        public ICommand LoginCommand => new RelayCommand(Login);
         public ICommand SwitchCommand { get; }
         public ICommand DeleteCommand { get; }
 
         public AccountsViewModel()
         {
-            SaveCurrentCommand = new RelayCommand(async () => await SaveCurrent());
             SwitchCommand = new RelayCommand(Switch, () => HasSelection);
             DeleteCommand = new RelayCommand(Delete, () => HasSelection);
             Reload();
@@ -110,6 +110,18 @@ namespace Bloxstrap.UI.ViewModels.Settings
             string? error = await App.AccountVault.SaveCurrentAsync();
             StatusText = error ?? "Current account saved.";
             Reload();
+        }
+
+        private void Login()
+        {
+            var dialog = new Elements.Dialogs.AccountLoginDialog();
+            dialog.ShowDialog();
+
+            if (dialog.Saved)
+            {
+                StatusText = "Account added from browser login.";
+                Reload();
+            }
         }
 
         private void Switch()

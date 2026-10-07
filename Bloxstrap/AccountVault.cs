@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+
 namespace Bloxstrap
 {
     // snitch.out: multi-account vault. Each account keeps a full copy of the
@@ -170,6 +172,66 @@ namespace Bloxstrap
             }
 
             Save();
+        }
+
+        // snitch.out: Froststrap-style browser login import. Merges a captured
+        // .ROBLOSECURITY value into the live cookie file (decrypt, replace or
+        // append, re-encrypt) so all other cookies survive, then saves it.
+        public async Task<string?> ImportCookieAsync(string roblosecurity)
+        {
+            if (String.IsNullOrWhiteSpace(roblosecurity) || roblosecurity.Any(x => x == '\t' || x == '\n' || x == '\r'))
+                return "Invalid cookie value.";
+
+            try
+            {
+                string live = App.Cookies.CookieFilePath;
+                string raw = "";
+
+                if (File.Exists(live))
+                {
+                    var existing = JsonSerializer.Deserialize<Models.RobloxCookies>(File.ReadAllText(live));
+
+                    if (existing is not null && !String.IsNullOrEmpty(existing.Cookies))
+                    {
+                        byte[] decrypted = ProtectedData.Unprotect(
+                            Convert.FromBase64String(existing.Cookies), null, DataProtectionScope.CurrentUser);
+                        raw = Encoding.UTF8.GetString(decrypted);
+                    }
+                }
+
+                var match = Regex.Match(raw, @"\t\.ROBLOSECURITY\t(.+?)(;|$)");
+
+                if (match.Success)
+                {
+                    raw = raw.Substring(0, match.Groups[1].Index) + roblosecurity +
+                        raw.Substring(match.Groups[1].Index + match.Groups[1].Length);
+                }
+                else
+                {
+                    if (!String.IsNullOrEmpty(raw) && !raw.EndsWith(";") && !raw.EndsWith("\t"))
+                        raw += ";";
+
+                    raw += $"\t.ROBLOSECURITY\t{roblosecurity}";
+                }
+
+                byte[] encrypted = ProtectedData.Protect(
+                    Encoding.UTF8.GetBytes(raw), null, DataProtectionScope.CurrentUser);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(live)!);
+                File.WriteAllText(live, JsonSerializer.Serialize(new Models.RobloxCookies
+                {
+                    Version = "1",
+                    Cookies = Convert.ToBase64String(encrypted)
+                }));
+
+                await App.Cookies.Reload();
+                return await SaveCurrentAsync();
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+                return $"Failed to import login: {ex.Message}";
+            }
         }
     }
 }
