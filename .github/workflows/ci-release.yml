@@ -24,7 +24,7 @@ jobs:
       run: dotnet publish -p:PublishSingleFile=true -p:CommitHash=${{ github.sha }} -p:CommitRef=${{ github.ref_type }}/${{ github.ref_name }} -r win-x64 -c Release --self-contained false .\Bloxstrap\Bloxstrap.csproj
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v4
       with:
         name: snitch.out
         path: .\Bloxstrap\bin\Release\net6.0-windows\win-x64\publish\snitch.out.exe
@@ -42,7 +42,7 @@ jobs:
         Get-ChildItem snitch.out-Setup-*.exe
 
     - name: Upload installer artifact
-      uses: actions/upload-artifact@v7
+      uses: actions/upload-artifact@v4
       with:
         name: snitch.out-setup
         path: snitch.out-Setup-*.exe
@@ -57,13 +57,13 @@ jobs:
 
     steps:
       - name: Download app artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           name: snitch.out
           path: release
 
       - name: Download installer artifact
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@v4
         with:
           name: snitch.out-setup
           path: release
@@ -71,7 +71,8 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v3
         with:
-          draft: true
+          draft: false
+          prerelease: false
           files: |
             release/snitch.out.exe
             release/snitch.out-Setup-*.exe
