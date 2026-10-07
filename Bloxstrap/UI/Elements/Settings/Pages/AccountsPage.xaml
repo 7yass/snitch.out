@@ -42,7 +42,7 @@
             </ListBox>
 
             <StackPanel Grid.Row="0" Grid.Column="1" Width="170">
-                <ui:Button Margin="0,0,0,8" Icon="Add28" Content="Save current" HorizontalAlignment="Stretch" Command="{Binding SaveCurrentCommand, Mode=OneTime}" />
+                <ui:Button Margin="0,0,0,8" Icon="Add28" Content="Add current account" HorizontalAlignment="Stretch" Command="{Binding SaveCurrentCommand, Mode=OneTime}" />
                 <ui:Button Margin="0,0,0,8" Icon="Play28" Content="Switch" HorizontalAlignment="Stretch" Command="{Binding SwitchCommand, Mode=OneTime}" />
                 <ui:Button Margin="0,0,0,8" Icon="Delete48" Content="Forget" HorizontalAlignment="Stretch" Appearance="Danger" Command="{Binding DeleteCommand, Mode=OneTime}" />
             </StackPanel>
