@@ -35,7 +35,7 @@ jobs:
         dotnet publish -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:CommitHash=${{ github.sha }} -p:CommitRef=${{ github.ref_type }}/${{ github.ref_name }} @stamp -r win-x64 -c Release --self-contained false .\Bloxstrap\Bloxstrap.csproj
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: snitch.out
         path: .\Bloxstrap\bin\Release\net6.0-windows\win-x64\publish\snitch.out.exe
@@ -53,7 +53,7 @@ jobs:
         Get-ChildItem snitch.out-Setup-*.exe
 
     - name: Upload installer artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: snitch.out-setup
         path: snitch.out-Setup-*.exe
