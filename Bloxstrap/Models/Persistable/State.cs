@@ -19,6 +19,12 @@ namespace Bloxstrap.Models.Persistable
         // snitch.out: accumulated player+studio wall time in seconds
         public long TotalPlaytimeSeconds { get; set; } = 0;
 
+        // snitch.out: last joined server, for one-click rejoin
+        public long LastPlaceId { get; set; } = 0;
+        public string LastJobId { get; set; } = "";
+        public string LastUniverseName { get; set; } = "";
+        public DateTime LastPlayedUtc { get; set; }
+
         public WindowState SettingsWindow { get; set; } = new();
 
         #region Deprecated properties

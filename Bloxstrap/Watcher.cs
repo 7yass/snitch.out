@@ -78,8 +78,40 @@ namespace Bloxstrap
                 ActivityWatcher.OnGameLeave += (_, _) =>
                 {
                     var session = ActivityWatcher.History.FirstOrDefault();
-                    if (session is not null)
-                        App.Playtime.RecordLeave(session);
+                    if (session is null)
+                        return;
+
+                    App.Playtime.RecordLeave(session);
+
+                    // backfill the game name for rejoin if join-time lookup missed it
+                    if (String.IsNullOrEmpty(App.State.Prop.LastUniverseName))
+                    {
+                        string? name = session.UniverseDetails?.Data.Name;
+                        if (!String.IsNullOrEmpty(name))
+                        {
+                            App.State.Prop.LastUniverseName = name;
+                            App.State.Save();
+                        }
+                    }
+                };
+
+                // snitch.out: remember the latest server for one-click rejoin
+                ActivityWatcher.OnGameJoin += (_, _) =>
+                {
+                    var data = ActivityWatcher.Data;
+
+                    if (data.PlaceId != 0 && !String.IsNullOrEmpty(data.JobId))
+                    {
+                        App.State.Prop.LastPlaceId = data.PlaceId;
+                        App.State.Prop.LastJobId = data.JobId;
+                        App.State.Prop.LastPlayedUtc = DateTime.UtcNow;
+
+                        string? name = data.UniverseDetails?.Data.Name;
+                        if (!String.IsNullOrEmpty(name))
+                            App.State.Prop.LastUniverseName = name;
+
+                        App.State.Save();
+                    }
                 };
 
                 if (App.Settings.Prop.UseDisableAppPatch)

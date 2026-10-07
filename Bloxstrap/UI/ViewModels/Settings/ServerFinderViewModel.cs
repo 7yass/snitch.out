@@ -91,6 +91,8 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public ICommand LoadMoreCommand => new RelayCommand(async () => await LoadMoreAsync(), () => HasMore && !IsLoading);
         public ICommand JoinCommand => new RelayCommand(JoinSelected);
         public ICommand CopyJobIdCommand => new RelayCommand(CopyJobId);
+        public ICommand LookupCommand => new RelayCommand(async () => await LookupAsync());
+        public ICommand RejoinLastCommand => new RelayCommand(RejoinLast);
 
         private static string FormatCount(long value)
         {
@@ -242,6 +244,122 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
             Clipboard.SetText(SelectedServer.JobId);
             StatusText = "Server ID copied.";
+        }
+
+        // snitch.out: rejoin card
+        public bool HasLastSession => App.State.Prop.LastPlaceId != 0 && !String.IsNullOrEmpty(App.State.Prop.LastJobId);
+
+        public Visibility LastSessionVisibility => HasLastSession ? Visibility.Visible : Visibility.Collapsed;
+
+        public string LastSessionText
+        {
+            get
+            {
+                string name = String.IsNullOrEmpty(App.State.Prop.LastUniverseName)
+                    ? $"Place {App.State.Prop.LastPlaceId}"
+                    : App.State.Prop.LastUniverseName;
+
+                string when = App.State.Prop.LastPlayedUtc == default
+                    ? ""
+                    : $" · last played {App.State.Prop.LastPlayedUtc.ToLocalTime():g}";
+
+                return $"{name}{when}";
+            }
+        }
+
+        private void RejoinLast()
+        {
+            if (!HasLastSession)
+                return;
+
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = Bloxstrap.Utility.ServerBrowser.BuildJoinUrl(App.State.Prop.LastPlaceId, App.State.Prop.LastJobId),
+                    UseShellExecute = true
+                });
+
+                StatusText = "Rejoining last server...";
+            }
+            catch (Exception ex)
+            {
+                StatusText = $"Could not launch: {ex.Message}";
+            }
+        }
+
+        // snitch.out: player lookup
+        public string LookupInput { get; set; } = "";
+
+        public string LookupStatus { get; private set; } = "";
+
+        public string LookupName { get; private set; } = "";
+
+        public string LookupDetails { get; private set; } = "";
+
+        public string? LookupAvatarUrl { get; private set; }
+
+        public Visibility LookupVisibility { get; private set; } = Visibility.Collapsed;
+
+        private void SetLookup(string? status = null, string? name = null, string? details = null, string? avatar = null, bool visible = false)
+        {
+            if (status is not null)
+            {
+                LookupStatus = status;
+                OnPropertyChanged(nameof(LookupStatus));
+            }
+
+            LookupName = name ?? "";
+            LookupDetails = details ?? "";
+            LookupAvatarUrl = avatar;
+            LookupVisibility = visible ? Visibility.Visible : Visibility.Collapsed;
+
+            OnPropertyChanged(nameof(LookupName));
+            OnPropertyChanged(nameof(LookupDetails));
+            OnPropertyChanged(nameof(LookupAvatarUrl));
+            OnPropertyChanged(nameof(LookupVisibility));
+        }
+
+        private async Task LookupAsync()
+        {
+            SetLookup(status: "Looking up...");
+            OnPropertyChanged(nameof(LastSessionVisibility));
+
+            try
+            {
+                long? userId = await Bloxstrap.Utility.ServerBrowser.ResolveUserIdAsync(LookupInput);
+
+                if (userId is null)
+                {
+                    SetLookup(status: "No Roblox user matches that input.");
+                    return;
+                }
+
+                var profile = await Bloxstrap.Utility.ServerBrowser.GetUserAsync(userId.Value);
+
+                if (profile is null)
+                {
+                    SetLookup(status: "Profile not found.");
+                    return;
+                }
+
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+
+                string? avatar = await Bloxstrap.Utility.ServerBrowser.GetAvatarAsync(userId.Value, cts.Token);
+                int? friends = await Bloxstrap.Utility.ServerBrowser.GetFriendCountAsync(userId.Value);
+
+                string name = $"{profile.DisplayName} (@{profile.Name}){(profile.HasVerifiedBadge ? " ☑️" : "")}";
+                string details = $"ID {profile.Id} · joined {profile.Created:d} · {(friends.HasValue ? $"{friends.Value} friends" : "friends hidden")}" +
+                    (profile.IsBanned ? " · BANNED" : "") +
+                    (String.IsNullOrWhiteSpace(profile.Description) ? "" : $"\n{profile.Description.Trim()}");
+
+                SetLookup(status: "", name: name, details: details, avatar: avatar, visible: true);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("ServerFinder::Lookup", ex);
+                SetLookup(status: $"Lookup failed: {ex.Message}");
+            }
         }
     }
 }

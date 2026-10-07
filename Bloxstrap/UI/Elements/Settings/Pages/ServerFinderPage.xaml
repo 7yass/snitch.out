@@ -17,6 +17,13 @@
     <StackPanel Margin="0,0,14,14">
         <TextBlock Text="Find a server worth joining. Paste any game link or place ID." FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
 
+        <ui:CardAction Margin="0,12,0,0" Icon="Play28" Command="{Binding RejoinLastCommand, Mode=OneTime}" Visibility="{Binding LastSessionVisibility, Mode=OneWay}">
+            <StackPanel>
+                <TextBlock FontSize="14" Text="Rejoin last server" TextWrapping="Wrap" />
+                <TextBlock Margin="0,2,0,0" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding LastSessionText, Mode=OneWay}" TextWrapping="Wrap" />
+            </StackPanel>
+        </ui:CardAction>
+
         <Grid Margin="0,12,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -58,5 +65,36 @@
             <ui:Button Margin="0,0,8,0" Content="Copy server ID" Command="{Binding CopyJobIdCommand, Mode=OneTime}" />
             <ui:Button Content="Load more" Command="{Binding LoadMoreCommand, Mode=OneTime}" />
         </StackPanel>
+
+        <TextBlock Text="Player lookup" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
+        <TextBlock Text="Username, user ID, or profile link. All public info, no login needed." FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+
+        <Grid Margin="0,8,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <ui:TextBox Grid.Column="0" Margin="0,0,8,0" PlaceholderText="Builderman or 156..." Text="{Binding LookupInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <ui:Button Grid.Column="1" Icon="Search32" Content="Look up" Command="{Binding LookupCommand, Mode=OneTime}" />
+        </Grid>
+
+        <TextBlock Margin="0,8,0,0" FontSize="13" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding LookupStatus, Mode=OneWay}" TextWrapping="Wrap" />
+
+        <Grid Margin="0,8,0,0" Visibility="{Binding LookupVisibility, Mode=OneWay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Width="100" Height="100" CornerRadius="50" ClipToBounds="True" Margin="0,0,12,0">
+                <Image Source="{Binding LookupAvatarUrl, Mode=OneWay}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" />
+            </Border>
+
+            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                <TextBlock FontSize="16" FontWeight="Medium" Text="{Binding LookupName, Mode=OneWay}" TextWrapping="Wrap" />
+                <TextBlock Margin="0,4,0,0" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding LookupDetails, Mode=OneWay}" TextWrapping="Wrap" />
+            </StackPanel>
+        </Grid>
     </StackPanel>
 </ui:UiPage>
