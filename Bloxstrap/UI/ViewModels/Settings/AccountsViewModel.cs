@@ -17,10 +17,22 @@ namespace Bloxstrap.UI.ViewModels.Settings
     public class AccountsViewModel : NotifyPropertyChangedViewModel
     {
         private string _statusText = "";
+        private AccountRow? _selectedAccount;
 
         public ObservableCollection<AccountRow> Accounts { get; } = new();
 
-        public AccountRow? SelectedAccount { get; set; }
+        public AccountRow? SelectedAccount
+        {
+            get => _selectedAccount;
+            set
+            {
+                _selectedAccount = value;
+                OnPropertyChanged(nameof(SelectedAccount));
+                OnPropertyChanged(nameof(HasSelection));
+                (SwitchCommand as CommunityToolkit.Mvvm.Input.RelayCommand)?.NotifyCanExecuteChanged();
+                (DeleteCommand as CommunityToolkit.Mvvm.Input.RelayCommand)?.NotifyCanExecuteChanged();
+            }
+        }
 
         public bool HasSelection => SelectedAccount is not null;
 
@@ -36,12 +48,15 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public bool NeedsCookieAccess => !App.Cookies.Loaded;
 
-        public ICommand SaveCurrentCommand => new RelayCommand(async () => await SaveCurrent());
-        public ICommand SwitchCommand => new RelayCommand(Switch, () => HasSelection);
-        public ICommand DeleteCommand => new RelayCommand(Delete, () => HasSelection);
+        public ICommand SaveCurrentCommand { get; }
+        public ICommand SwitchCommand { get; }
+        public ICommand DeleteCommand { get; }
 
         public AccountsViewModel()
         {
+            SaveCurrentCommand = new RelayCommand(async () => await SaveCurrent());
+            SwitchCommand = new RelayCommand(Switch, () => HasSelection);
+            DeleteCommand = new RelayCommand(Delete, () => HasSelection);
             Reload();
             App.Cookies.StateChanged += (_, _) => OnPropertyChanged(nameof(NeedsCookieAccess));
         }
