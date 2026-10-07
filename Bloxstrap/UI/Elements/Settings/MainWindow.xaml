@@ -45,15 +45,25 @@
         <Grid x:Name="RootGrid" Grid.Row="1" Margin="12,12,0,0" Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
+            <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" Margin="4,2,12,12" VerticalAlignment="Center">
+                <Border Width="36" Height="36" CornerRadius="10" ClipToBounds="True">
+                    <Image Source="pack://application:,,,/Bloxstrap.ico" RenderOptions.BitmapScalingMode="HighQuality" />
+                </Border>
+                <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
+                    <TextBlock Text="snitch.out" FontSize="16" FontWeight="SemiBold" />
+                    <TextBlock Text="Roblox bootstrapper" FontSize="12" Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+                </StackPanel>
+            </StackPanel>
             <!--gotta fix that overflow-->
-            <ui:AutoSuggestBox Grid.Row="0" Grid.Column="0" PlaceholderText="Search" Margin="0,0,12,8" TextChanged="AutoSuggestBoxTextChanged" Width="250"/>
-            <ui:NavigationFluent x:Name="RootNavigation" Grid.Row="1" Grid.Column="0" Margin="0,0,12,0" Frame="{Binding ElementName=RootFrame}" SelectedPageIndex="0">
+            <ui:AutoSuggestBox Grid.Row="1" Grid.Column="0" PlaceholderText="Search" Margin="0,0,12,8" TextChanged="AutoSuggestBoxTextChanged" Width="250"/>
+            <ui:NavigationFluent x:Name="RootNavigation" Grid.Row="2" Grid.Column="0" Margin="0,0,12,0" Frame="{Binding ElementName=RootFrame}" SelectedPageIndex="0">
                 <ui:NavigationFluent.Items>
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Integrations_Title}" PageType="{x:Type pages:IntegrationsPage}" Icon="Add28" Tag="integrations" />
                     <ui:NavigationItem Content="{x:Static resources:Strings.Menu_Behaviour_Title}" PageType="{x:Type pages:BehaviourPage}" Icon="PlaySettings20" Tag="bootstrapper" />
@@ -73,7 +83,7 @@
                 </ui:NavigationFluent.Footer>
             </ui:NavigationFluent>
 
-            <Grid Grid.Row="0" Grid.RowSpan="2" Grid.Column="1">
+            <Grid Grid.Row="0" Grid.RowSpan="3" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
