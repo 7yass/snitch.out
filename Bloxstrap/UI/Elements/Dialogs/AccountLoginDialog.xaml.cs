@@ -35,7 +35,15 @@ namespace Bloxstrap.UI.Elements.Dialogs
             {
                 await Browser.EnsureCoreWebView2Async();
             }
-            catch (Exception ex) when (ex is DllNotFoundException || ex is FileNotFoundException || ex.Message.Contains("runtime", StringComparison.OrdinalIgnoreCase))
+            catch (Exception ex) when (ex is DllNotFoundException || ex is FileNotFoundException || ex is BadImageFormatException)
+            {
+                // this is OUR missing WebView2Loader.dll (single-file publish dropped it),
+                // not the user's runtime. fixed in v0.2.10 by bundling native libs.
+                App.Logger.WriteException("AccountLoginDialog", ex);
+                StatusText.Text = "Login browser files are incomplete in this build (WebView2Loader.dll is missing next to the exe). Use the Setup installer, or update to a build with the fix, then try again.";
+                return;
+            }
+            catch (Exception ex) when (ex is Microsoft.Web.WebView2.Core.WebView2RuntimeNotFoundException || ex.Message.Contains("runtime", StringComparison.OrdinalIgnoreCase))
             {
                 App.Logger.WriteException("AccountLoginDialog", ex);
                 StatusText.Text = "WebView2 runtime is missing, so the login browser cannot open. Install Roblox once (it ships WebView2) and try again.";

@@ -23,13 +23,16 @@ jobs:
     - name: Publish
       # the binary's version is stamped from the git tag so it can never drift
       # from the release (a stale csproj version makes the updater loop)
+      # IncludeNativeLibrariesForSelfExtract bundles WebView2Loader.dll into the
+      # single exe - without it the standalone download misses the file and the
+      # login browser dies with DllNotFoundException
       run: |
         $stamp = @()
         if ("${{ github.ref_type }}" -eq "tag") {
           $v = "${{ github.ref_name }}".TrimStart("v")
           $stamp = @("-p:Version=$v", "-p:FileVersion=$v")
         }
-        dotnet publish -p:PublishSingleFile=true -p:CommitHash=${{ github.sha }} -p:CommitRef=${{ github.ref_type }}/${{ github.ref_name }} @stamp -r win-x64 -c Release --self-contained false .\Bloxstrap\Bloxstrap.csproj
+        dotnet publish -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:CommitHash=${{ github.sha }} -p:CommitRef=${{ github.ref_type }}/${{ github.ref_name }} @stamp -r win-x64 -c Release --self-contained false .\Bloxstrap\Bloxstrap.csproj
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4

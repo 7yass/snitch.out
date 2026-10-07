@@ -137,7 +137,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
                 }
 
                 Process.Start(new ProcessStartInfo { FileName = installer, UseShellExecute = true });
-                StatusText = "WebView2 installer launched. Finish it, then click Log in & add again.";
+                StatusText = "WebView2 installer launched. If it says the runtime is already installed, your runtime is fine - this build is just missing its browser files. Update snitch.out, then click Log in & add again.";
                 return;
             }
 
