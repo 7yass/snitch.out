@@ -65,6 +65,17 @@
             set => App.Settings.Prop.BackgroundUpdatesEnabled = value;
         }
 
+        // snitch.out: nightly (per-commit) update channel
+        public bool NightlyUpdates
+        {
+            get => App.Settings.Prop.UseNightlyBuilds;
+            set
+            {
+                App.Settings.Prop.UseNightlyBuilds = value;
+                OnPropertyChanged(nameof(NightlyUpdates));
+            }
+        }
+
         public CleanerOptions SelectedCleanUpMode
         {
             get => App.Settings.Prop.CleanerOptions;

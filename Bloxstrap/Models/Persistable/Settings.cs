@@ -40,6 +40,8 @@ namespace Bloxstrap.Models.Persistable
         public bool BackgroundUpdatesEnabled { get; set; } = false;
         // snitch.out: multi-instance support
         public bool AllowMultiInstance { get; set; } = false;
+        // snitch.out: update channel (commit builds instead of tagged releases)
+        public bool UseNightlyBuilds { get; set; } = false;
         // snitch.out: version snapshot keeper for testing older builds
         public string PinnedVersionGuid { get; set; } = "";
         public bool KeepOldVersions { get; set; } = true;

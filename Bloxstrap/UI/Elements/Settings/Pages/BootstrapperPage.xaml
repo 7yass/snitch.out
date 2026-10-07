@@ -36,6 +36,12 @@
             <ui:ToggleSwitch IsChecked="{Binding BackgroundUpdates, Mode=TwoWay}" />
         </controls:OptionControl>
 
+        <controls:OptionControl
+            Header="Nightly builds"
+            Description="Update on every commit instead of tagged releases. Fresher features, higher chance of breakage.">
+            <ui:ToggleSwitch IsChecked="{Binding NightlyUpdates, Mode=TwoWay}" />
+        </controls:OptionControl>
+
         <ui:CardExpander Grid.Row="1" Margin="0,8,0,0" IsExpanded="True">
             <ui:CardExpander.Header>
                 <Grid>

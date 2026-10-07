@@ -99,8 +99,7 @@
             <ui:ToggleSwitch IsChecked="{Binding DiscordStudioEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <TextBlock Text="Multi-instance" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
-        <controls:OptionControl
+        <TextBlock Text="Multi-instance" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />        <controls:OptionControl
             Header="Allow multiple Roblox clients"
             Description="Closes the singleton lock so a second client can start. Each extra client should use a different account (see Accounts). May trip concurrent-session limits - use at your own risk.">
             <StackPanel Orientation="Horizontal">

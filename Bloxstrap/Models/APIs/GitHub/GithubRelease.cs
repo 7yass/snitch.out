@@ -16,5 +16,8 @@
 
         [JsonPropertyName("assets")]
         public List<GithubReleaseAsset>? Assets { get; set; }
+
+        [JsonPropertyName("target_commitish")]
+        public string? TargetCommitish { get; set; }
     }
 }

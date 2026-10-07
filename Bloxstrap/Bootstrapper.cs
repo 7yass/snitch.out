@@ -215,7 +215,10 @@ namespace Bloxstrap
 #if (!DEBUG || DEBUG_UPDATER) && !QA_BUILD
             if (App.Settings.Prop.CheckForUpdates && !App.LaunchSettings.UpgradeFlag.Active)
             {
-                bool updatePresent = await CheckForUpdates();
+                // snitch.out: nightly channel is commit-based and always prompts
+                bool updatePresent = App.Settings.Prop.UseNightlyBuilds
+                    ? await Utility.AppUpdater.CheckNightlyAsync()
+                    : await CheckForUpdates();
 
                 if (updatePresent)
                     return;

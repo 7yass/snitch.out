@@ -1,0 +1,95 @@
+name: Nightly (per-commit builds)
+
+# Publishes every main commit as a prerelease tagged `nightly`.
+# Prereleases never disturb /releases/latest, so the stable channel is unaffected.
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        submodules: true
+
+    - uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '6.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build -c Release --no-restore
+
+    - name: Publish
+      run: dotnet publish -p:PublishSingleFile=true -p:CommitHash=${{ github.sha }} -p:CommitRef=${{ github.ref_type }}/${{ github.ref_name }} -r win-x64 -c Release --self-contained false .\Bloxstrap\Bloxstrap.csproj
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: snitch.out
+        path: .\Bloxstrap\bin\Release\net6.0-windows\win-x64\publish\snitch.out.exe
+        archive: false
+
+    - name: Build installer
+      shell: pwsh
+      run: |
+        choco install innosetup -y --no-progress
+        $iscc = @('C:\Program Files\Inno Setup 6\ISCC.exe', 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe') | Where-Object { Test-Path $_ } | Select-Object -First 1
+        if (-not $iscc) { throw "ISCC.exe not found after installing Inno Setup" }
+        & $iscc /DAppVersion=0.0.0 installer/snitch.iss
+        Get-ChildItem snitch.out-Setup-*.exe
+
+    - name: Upload installer artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: snitch.out-setup
+        path: snitch.out-Setup-*.exe
+        archive: false
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download app artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: snitch.out
+          path: release
+
+      - name: Download installer artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: snitch.out-setup
+          path: release
+
+      - name: Remove previous nightly
+        uses: dev-drprasad/delete-tag-and-release@v1.1
+        with:
+          delete_release: true
+          tag_name: nightly
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Create nightly release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: nightly
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+          name: snitch.out nightly (${{ github.sha }})
+          body: |
+            Per-commit build of main. Expect rough edges.
+            Run `snitch.out-Setup-*.exe` to install.
+          files: |
+            release/snitch.out.exe
+            release/snitch.out-Setup-*.exe
+          fail_on_unmatched_files: true

@@ -36,6 +36,10 @@ namespace Bloxstrap.UI.Elements.Dialogs
             DataContext = viewModel;
 
             InitializeComponent();
+
+            // snitch.out: check for app updates when the menu opens (once per run)
+            this.Loaded += async (s, e) => await Bloxstrap.Utility.AppUpdater.CheckAndPromptAsync();
+
             Random Chance = new();
             if (Chance.Next(0, 10000) == 1)
             {

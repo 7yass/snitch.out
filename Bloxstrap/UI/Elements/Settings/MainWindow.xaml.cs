@@ -82,6 +82,9 @@ namespace Bloxstrap.UI.Elements.Settings
                     BuildSearchIndexAutomatically();
                 }, System.Windows.Threading.DispatcherPriority.Background);
             };
+
+            // snitch.out: check for app updates when the menu opens (once per run)
+            this.Loaded += async (s, e) => await Bloxstrap.Utility.AppUpdater.CheckAndPromptAsync();
         }
 
         public void LoadState()
