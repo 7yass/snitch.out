@@ -35,10 +35,16 @@ namespace Bloxstrap.UI.Elements.Dialogs
             {
                 await Browser.EnsureCoreWebView2Async();
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is DllNotFoundException || ex is FileNotFoundException || ex.Message.Contains("runtime", StringComparison.OrdinalIgnoreCase))
             {
                 App.Logger.WriteException("AccountLoginDialog", ex);
                 StatusText.Text = "WebView2 runtime is missing, so the login browser cannot open. Install Roblox once (it ships WebView2) and try again.";
+                return;
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException("AccountLoginDialog", ex);
+                StatusText.Text = $"Login browser failed to start: {ex.Message}";
                 return;
             }
 

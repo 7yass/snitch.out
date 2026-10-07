@@ -112,8 +112,35 @@ namespace Bloxstrap.UI.ViewModels.Settings
             Reload();
         }
 
-        private void Login()
+        private async void Login()
         {
+            // snitch.out: the embedded browser needs the WebView2 runtime
+            if (!Bloxstrap.Utility.WebView2Util.IsInstalled())
+            {
+                var answer = Frontend.ShowMessageBox(
+                    "Logging in inside the app needs the WebView2 runtime, which was not found. Download and install it now?",
+                    MessageBoxImage.Question,
+                    MessageBoxButton.YesNo
+                );
+
+                if (answer != MessageBoxResult.Yes)
+                    return;
+
+                StatusText = "Downloading WebView2 runtime...";
+
+                string? installer = await Bloxstrap.Utility.WebView2Util.DownloadInstallerAsync();
+
+                if (installer is null)
+                {
+                    StatusText = "Download failed. Install Roblox once instead (it ships WebView2), then try again.";
+                    return;
+                }
+
+                Process.Start(new ProcessStartInfo { FileName = installer, UseShellExecute = true });
+                StatusText = "WebView2 installer launched. Finish it, then click Log in & add again.";
+                return;
+            }
+
             var dialog = new Elements.Dialogs.AccountLoginDialog();
             dialog.ShowDialog();
 
