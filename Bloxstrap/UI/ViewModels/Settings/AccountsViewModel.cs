@@ -48,6 +48,24 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public bool NeedsCookieAccess => !App.Cookies.Loaded;
 
+        public string CookieStateText
+        {
+            get
+            {
+                string detail = App.Cookies.State switch
+                {
+                    CookieState.Success => "logged in, ready to save accounts.",
+                    CookieState.NotAllowed => "account access is off. Turn it on under Behaviour (experimental).",
+                    CookieState.NotFound => $"no Roblox cookie file found at {App.Cookies.CookieFilePath}. Launch the Roblox player once while logged in.",
+                    CookieState.Invalid => "cookie file found but the session is invalid (logged out or expired). Log into Roblox in the player, then try again.",
+                    CookieState.Failed => "cookie file could not be read. Try relaunching snitch.out.",
+                    _ => "cookie state unknown yet. Wait a few seconds and reopen this page."
+                };
+
+                return $"Cookie state: {App.Cookies.State}. {detail}";
+            }
+        }
+
         public ICommand SaveCurrentCommand { get; }
         public ICommand SwitchCommand { get; }
         public ICommand DeleteCommand { get; }
@@ -58,7 +76,11 @@ namespace Bloxstrap.UI.ViewModels.Settings
             SwitchCommand = new RelayCommand(Switch, () => HasSelection);
             DeleteCommand = new RelayCommand(Delete, () => HasSelection);
             Reload();
-            App.Cookies.StateChanged += (_, _) => OnPropertyChanged(nameof(NeedsCookieAccess));
+            App.Cookies.StateChanged += (_, _) =>
+            {
+                OnPropertyChanged(nameof(NeedsCookieAccess));
+                OnPropertyChanged(nameof(CookieStateText));
+            };
         }
 
         public void Reload()

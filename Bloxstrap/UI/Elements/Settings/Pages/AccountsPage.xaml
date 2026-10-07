@@ -19,6 +19,8 @@
 
         <TextBlock Margin="0,8,0,0" FontSize="14" Foreground="Orange" Text="Saving requires account access (Behaviour, experimental). Your cookies never leave this machine." TextWrapping="Wrap" />
 
+        <TextBlock Margin="0,8,0,0" FontSize="13" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding CookieStateText, Mode=OneWay}" TextWrapping="Wrap" />
+
         <Grid Margin="0,16,0,0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
