@@ -140,12 +140,13 @@ namespace Bloxstrap
                 }
 
                 string authCookie = authCookieMatch.Groups[1].Value;
-                AuthCookie = authCookie; // could use better naming
 
                 // we test the cookie to see if its valid
+                AuthCookie = authCookie; // set late so a failed validation stays retryable
                 AuthenticatedUser? user = await GetAuthenticated();
                 if (user is null || user?.Id == 0)
                 {
+                    AuthCookie = String.Empty;
                     State = CookieState.Invalid;
                     App.Logger.WriteLine(LOG_IDENT, "Cookie is invalid");
                     return;
@@ -158,6 +159,7 @@ namespace Bloxstrap
                 App.Logger.WriteLine(LOG_IDENT, "Failed to load cookie!");
                 App.Logger.WriteException(LOG_IDENT, ex); 
 
+                AuthCookie = String.Empty;
                 State = CookieState.Failed;
             }
 
