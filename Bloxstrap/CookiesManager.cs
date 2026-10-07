@@ -29,6 +29,17 @@ namespace Bloxstrap
         private const string AuthPattern = $@"\t{AuthCookieName}\t(.+?)(;|$)";
         private string CookiesPath => Path.Combine(Paths.Roblox, "LocalStorage", Deployment.IsDefaultRobloxDomain ? "RobloxCookies.dat" : $"{Deployment.RobloxDomain}_RobloxCookies.dat");
 
+        // snitch.out: account switcher needs the live cookie file path
+        public string CookieFilePath => CookiesPath;
+
+        // snitch.out: re-read the cookie file (used after switching accounts)
+        public async Task Reload()
+        {
+            AuthCookie = string.Empty;
+            State = CookieState.Unknown;
+            await LoadCookies();
+        }
+
         public async Task<HttpResponseMessage> AuthRequest(HttpRequestMessage request)
         {
             string? host = request.RequestUri?.Host;

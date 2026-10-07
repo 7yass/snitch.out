@@ -71,6 +71,9 @@ namespace Bloxstrap
         // snitch.out: per-game playtime
         public static readonly PlaytimeManager Playtime = new();
 
+        // snitch.out: multi-account vault
+        public static readonly AccountVault AccountVault = new();
+
         public static readonly GlobalSettingsManager GlobalSettings = new();
 
         public static readonly CookiesManager Cookies = new();
@@ -327,6 +330,7 @@ namespace Bloxstrap
                 FastFlags.Load();
                 GlobalSettings.Load();
                 Playtime.Load();
+                AccountVault.Load();
 
                 if (Settings.Prop.AllowCookieAccess)
                     Task.Run(Cookies.LoadCookies);

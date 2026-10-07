@@ -1006,6 +1006,10 @@ namespace Bloxstrap
                     Process.Start(Paths.Process, args);
             }
 
+            // snitch.out: close the singleton mutex so another client can start
+            if (!IsStudioLaunch && App.Settings.Prop.AllowMultiInstance)
+                _ = Task.Run(() => Utility.SingletonPatch.WaitAndKillAsync(_appPid));
+
             // allow for window to show, since the log is created pretty far beforehand
             Thread.Sleep(1000);
         }

@@ -170,6 +170,13 @@ namespace Bloxstrap.UI.ViewModels.Settings
             set => App.Settings.Prop.UseStudioPresence = value;
         }
 
+        // snitch.out: multi-instance support
+        public bool MultiInstanceEnabled
+        {
+            get => App.Settings.Prop.AllowMultiInstance;
+            set => App.Settings.Prop.AllowMultiInstance = value;
+        }
+
         public bool DisableAppPatchEnabled
         {
             get => App.Settings.Prop.UseDisableAppPatch;

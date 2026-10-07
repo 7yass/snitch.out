@@ -1,4 +1,4 @@
-﻿﻿using System.Windows;
+﻿using System.Windows;
 
 using Windows.Win32;
 using Windows.Win32.Foundation;
@@ -228,7 +228,8 @@ namespace Bloxstrap
                 App.Terminate(ErrorCode.ERROR_FILE_NOT_FOUND);
             }
 
-            if (App.Settings.Prop.ConfirmLaunches && Utilities.IsRobloxRunning() && launchMode != LaunchMode.Studio)
+            // snitch.out: no confirm prompt when multi-instance is allowed
+            if (App.Settings.Prop.ConfirmLaunches && Utilities.IsRobloxRunning() && launchMode != LaunchMode.Studio && !App.Settings.Prop.AllowMultiInstance)
             {
                 // this currently doesn't work very well since it relies on checking the existence of the singleton mutex
                 // which often hangs around for a few seconds after the window closes
