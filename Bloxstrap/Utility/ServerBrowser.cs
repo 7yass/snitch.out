@@ -56,6 +56,35 @@ namespace Bloxstrap.Utility
             return await Http.GetJson<PublicServerListResponse>(new Uri(url));
         }
 
+        // null = unknown (list unreachable or too many pages to confirm).
+        // Never block a launch on unknown - Roblox itself is the authority.
+        public static async Task<bool?> ServerStillAliveAsync(long placeId, string jobId, int maxPages = 5)
+        {
+            try
+            {
+                string? cursor = null;
+
+                for (int page = 0; page < maxPages; page++)
+                {
+                    var response = await GetServersAsync(placeId, cursor, "Desc");
+
+                    if (response.Data.Any(s => s.Id == jobId))
+                        return true;
+
+                    if (String.IsNullOrEmpty(response.NextPageCursor))
+                        return false;
+
+                    cursor = response.NextPageCursor;
+                }
+
+                return null;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
         public static string BuildJoinUrl(long placeId, string jobId) =>
             $"roblox://experiences/start?placeId={placeId}&gameInstanceId={jobId}";
 

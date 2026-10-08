@@ -92,7 +92,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public ICommand JoinCommand => new RelayCommand(JoinSelected);
         public ICommand CopyJobIdCommand => new RelayCommand(CopyJobId);
         public ICommand LookupCommand => new RelayCommand(async () => await LookupAsync());
-        public ICommand RejoinLastCommand => new RelayCommand(RejoinLast);
+        public ICommand RejoinLastCommand => new RelayCommand(async () => await RejoinLastAsync());
 
         private static string FormatCount(long value)
         {
@@ -267,10 +267,26 @@ namespace Bloxstrap.UI.ViewModels.Settings
             }
         }
 
-        private void RejoinLast()
+        private async Task RejoinLastAsync()
         {
             if (!HasLastSession)
                 return;
+
+            // snitch.out: a stale gameInstanceId makes Roblox itself pop
+            // "Authentication Error / Expired token". Check the server is
+            // still listed before firing a dead link at the player.
+            StatusText = "Checking if that server is still open...";
+
+            bool? alive = await Bloxstrap.Utility.ServerBrowser.ServerStillAliveAsync(
+                App.State.Prop.LastPlaceId, App.State.Prop.LastJobId);
+
+            if (alive == false)
+            {
+                StatusText = "That server has closed since you played. Pick a fresh one below.";
+                PlaceInput = App.State.Prop.LastPlaceId.ToString();
+                await SearchAsync();
+                return;
+            }
 
             try
             {
@@ -280,7 +296,9 @@ namespace Bloxstrap.UI.ViewModels.Settings
                     UseShellExecute = true
                 });
 
-                StatusText = "Rejoining last server...";
+                StatusText = alive == true
+                    ? "Rejoining last server..."
+                    : "Server list was unreachable, trying anyway. Roblox may say expired token if it already closed.";
             }
             catch (Exception ex)
             {
