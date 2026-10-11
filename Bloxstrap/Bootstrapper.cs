@@ -901,6 +901,30 @@ namespace Bloxstrap
                 }
             }
 
+            // snitch.out: with multi-instance, already-running clients still
+            // hold the singleton mutex (e.g. launched before this fix). The
+            // new client checks it at startup and exits (loading splash then
+            // closes) if it is held, so disarm old clients FIRST. The
+            // post-start detached killer (below) then covers the new client
+            // for the next launch in the chain.
+            if (!IsStudioLaunch && App.Settings.Prop.AllowMultiInstance)
+            {
+                try
+                {
+                    foreach (var roblox in Utilities.GetProcessesSafe()
+                        .Where(x => x.ProcessName.Equals("RobloxPlayerBeta", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        if (Utility.SingletonPatch.KillSingletonMutex(roblox.Id))
+                            App.Logger.WriteLine(LOG_IDENT, $"Cleared singleton mutex for running pid {roblox.Id}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Pre-start mutex clear failed, new client may refuse to start");
+                    App.Logger.WriteException(LOG_IDENT, ex);
+                }
+            }
+
             // v2.2.0 - byfron will trip if we keep a process handle open for over a minute, so we're doing this now
             try
             {
