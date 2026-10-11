@@ -1009,9 +1009,30 @@ namespace Bloxstrap
                     Process.Start(Paths.Process, args);
             }
 
-            // snitch.out: close the singleton mutex so another client can start
+            // snitch.out: close the singleton mutex so another client can start.
+            // detached helper process: the bootstrapper exits seconds after
+            // launch, which killed the old fire-and-forget task before Roblox
+            // created the mutex.
             if (!IsStudioLaunch && App.Settings.Prop.AllowMultiInstance)
-                _ = Task.Run(() => Utility.SingletonPatch.WaitAndKillAsync(_appPid));
+            {
+                try
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = Paths.Process,
+                        Arguments = $"-killmutex {_appPid}",
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    });
+
+                    App.Logger.WriteLine(LOG_IDENT, $"Spawned mutex killer for pid {_appPid}");
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Failed to spawn mutex killer");
+                    App.Logger.WriteException(LOG_IDENT, ex);
+                }
+            }
 
             // allow for window to show, since the log is created pretty far beforehand
             Thread.Sleep(1000);

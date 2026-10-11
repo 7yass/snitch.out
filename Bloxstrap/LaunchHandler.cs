@@ -64,6 +64,11 @@ namespace Bloxstrap
                 App.Logger.WriteLine(LOG_IDENT, "Opening background updater");
                 LaunchBackgroundUpdater();
             }
+            else if (App.LaunchSettings.KillMutexFlag.Active)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Running singleton mutex killer");
+                LaunchMutexKiller();
+            }
             else if (App.LaunchSettings.RobloxLaunchMode != LaunchMode.None)
             {
                 App.Logger.WriteLine(LOG_IDENT, $"Opening bootstrapper ({App.LaunchSettings.RobloxLaunchMode})");
@@ -307,6 +312,37 @@ namespace Bloxstrap
                 // shouldnt this be done after client closes?
                 if (App.Settings.Prop.CleanerOptions != CleanerOptions.Never)
                     Cleaner.DoCleaning();
+
+                App.Terminate();
+            });
+        }
+
+        public static void LaunchMutexKiller()
+        {
+            const string LOG_IDENT = "LaunchHandler::LaunchMutexKiller";
+
+            // snitch.out: detached singleton-mutex killer. Runs as its own
+            // process because the bootstrapper exits seconds after launch,
+            // which used to take the fire-and-forget kill task down with it
+            // before Roblox had created the mutex.
+            if (!int.TryParse(App.LaunchSettings.KillMutexFlag.Data, out int pid) || pid == 0)
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"Bad pid '{App.LaunchSettings.KillMutexFlag.Data}'");
+                App.Terminate();
+                return;
+            }
+
+            App.Logger.WriteLine(LOG_IDENT, $"Killing singleton mutex for pid {pid}");
+
+            Task.Run(() => Utility.SingletonPatch.WaitAndKillAsync(pid)).ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "An exception occurred when killing the mutex");
+
+                    if (t.Exception is not null)
+                        App.FinalizeExceptionHandling(t.Exception);
+                }
 
                 App.Terminate();
             });
