@@ -132,10 +132,18 @@ namespace Bloxstrap
             }
         }
 
-        public string? SwitchTo(long userId)
+        public string? SwitchTo(long userId, out bool switchedWhileRunning)
         {
-            if (Utilities.IsRobloxRunning())
+            switchedWhileRunning = false;
+
+            // snitch.out: with multi-instance on, switching while a client runs
+            // is the whole workflow (client 1 keeps its in-memory session, new
+            // launches read the swapped file). Only block when single-instance.
+            if (Utilities.IsRobloxRunning() && !App.Settings.Prop.AllowMultiInstance)
                 return "Close Roblox first, then switch accounts.";
+
+            if (Utilities.IsRobloxRunning())
+                switchedWhileRunning = true;
 
             string vaultFile = CookiePathFor(userId);
 

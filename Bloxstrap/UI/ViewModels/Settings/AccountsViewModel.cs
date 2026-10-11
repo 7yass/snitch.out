@@ -156,8 +156,10 @@ namespace Bloxstrap.UI.ViewModels.Settings
             if (SelectedAccount is null)
                 return;
 
-            string? error = App.AccountVault.SwitchTo(SelectedAccount.UserId);
-            StatusText = error ?? $"Switched to {SelectedAccount.Display}. Launch Roblox to play on it.";
+            string? error = App.AccountVault.SwitchTo(SelectedAccount.UserId, out bool whileRunning);
+            StatusText = error ?? (whileRunning
+                ? $"Switched to {SelectedAccount.Display}. Your running client stays on its account - new launches use this one."
+                : $"Switched to {SelectedAccount.Display}. Launch Roblox to play on it.");
             Reload();
         }
 
