@@ -4,9 +4,11 @@ namespace Bloxstrap.Utility
 {
     // snitch.out: multi-instance support. Roblox guards a singleton mutex;
     // closing the client's handle to it lets another client start.
+    // NOTE: Roblox renamed ROBLOX_singletonEvent -> ROBLOX_singletonMutex,
+    // so match on the shared prefix to cover old and new clients.
     public static class SingletonPatch
     {
-        private const string SingletonName = "ROBLOX_singletonEvent";
+        private const string SingletonName = "ROBLOX_singleton";
 
         private const int SystemHandleInformation = 16;
         private const int ObjectNameInformation = 1;
