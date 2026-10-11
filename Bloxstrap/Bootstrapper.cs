@@ -822,11 +822,27 @@ namespace Bloxstrap
                     _launchCommandLine = "roblox://navigation/home"; // fixes a bug on rblx.org where its stuck on the login screen, doesnt affect anything else
             }
 
+            // snitch.out: instance 2+ must run from a mirrored directory (see
+            // ClientMirror). slot = how many clients already run.
+            string clientExe = AppData.ExecutablePath;
+
+            if (!IsStudioLaunch && App.Settings.Prop.AllowMultiInstance)
+            {
+                int runningClients = Utilities.GetProcessesSafe()
+                    .Count(x => x.ProcessName.Equals("RobloxPlayerBeta", StringComparison.OrdinalIgnoreCase));
+
+                if (runningClients > 0)
+                    clientExe = Utility.ClientMirror.EnsureMirrorExe(
+                        AppData.Directory,
+                        Path.GetFileName(AppData.ExecutablePath),
+                        runningClients);
+            }
+
             var startInfo = new ProcessStartInfo()
             {
-                FileName = AppData.ExecutablePath,
+                FileName = clientExe,
                 Arguments = _launchCommandLine,
-                WorkingDirectory = AppData.Directory
+                WorkingDirectory = Path.GetDirectoryName(clientExe)!
             };
 
             if (_launchMode == LaunchMode.Player && ShouldRunAsAdmin())

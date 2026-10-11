@@ -19,6 +19,7 @@ namespace Bloxstrap.Utility
 
         private const uint PROCESS_DUP_HANDLE = 0x0040;
         private const uint DUPLICATE_CLOSE_SOURCE = 0x1;
+        private const uint MAXIMUM_ALLOWED = 0x02000000;
 
         // x64 SYSTEM_HANDLE_TABLE_ENTRY_INFO stride (8-byte aligned)
         private const int EntryStride = 24;
@@ -112,12 +113,19 @@ namespace Bloxstrap.Utility
 
                         IntPtr sourceHandle = (IntPtr)Marshal.ReadInt16(entryPtr + 6);
 
-                        if (NtDuplicateObject(processHandle, sourceHandle, GetCurrentProcess(), out IntPtr duplicated, 0, 0, 0) != STATUS_SUCCESS)
+                        // MAXIMUM_ALLOWED: event handles duplicated with 0
+                        // access cannot be name-queried, so they slip through
+                        if (NtDuplicateObject(processHandle, sourceHandle, GetCurrentProcess(), out IntPtr duplicated, MAXIMUM_ALLOWED, 0, 0) != STATUS_SUCCESS)
                             continue;
 
                         try
                         {
-                            if (!IsType(duplicated, "Mutant"))
+                            // Roblox guards both flavors: ROBLOX_singletonMutex
+                            // (Mutant) and ROBLOX_singletonEvent (Event).
+                            // Killing only the mutant leaves the event gate up.
+                            string? type = QueryObjectString(duplicated, ObjectTypeInformation, 0);
+
+                            if (type != "Mutant" && type != "Event")
                                 continue;
 
                             string? name = GetObjectName(duplicated);
