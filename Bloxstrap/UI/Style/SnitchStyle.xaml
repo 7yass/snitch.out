@@ -1,0 +1,75 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <!-- ============================
+         SNITCH BRAND PALETTE
+         ============================ -->
+    <SolidColorBrush x:Key="SnitchPrimary" Color="#981bfe" />
+    <SolidColorBrush x:Key="SnitchPrimaryDark" Color="#7a39fb" />
+    <SolidColorBrush x:Key="SnitchAccent" Color="#dd9900" />
+    <SolidColorBrush x:Key="SnitchPrimaryBrush" Color="#981bfe" Opacity="0.9" />
+    <SolidColorBrush x:Key="SnitchPrimaryHover" Color="#b03cff" />
+    <SolidColorBrush x:Key="SnitchPrimaryPressed" Color="#6d1fd4" />
+
+    <!-- subtle tinted surfaces -->
+    <SolidColorBrush x:Key="SnitchSurfaceTint" Color="#981bfe" Opacity="0.08" />
+    <SolidColorBrush x:Key="SnitchSurfaceTintHover" Color="#981bfe" Opacity="0.14" />
+
+    <!-- ============================
+         TYPOGRAPHY
+         ============================ -->
+    <Style x:Key="Snitch.SectionHeader" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="19" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+        <Setter Property="Margin" Value="0,24,0,8" />
+    </Style>
+
+    <Style x:Key="Snitch.SectionDescription" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="12.5" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorTertiaryBrush}" />
+        <Setter Property="Margin" Value="0,0,0,16" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
+    <Style x:Key="Snitch.PageHeader" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+        <Setter Property="Margin" Value="0,0,0,20" />
+    </Style>
+
+    <!-- ============================
+         CONTROL STYLES
+         ============================ -->
+
+    <!-- accent toggle switches -->
+    <Style x:Key="Snitch.ToggleSwitch" TargetType="ui:ToggleSwitch" BasedOn="{StaticResource {x:Type ui:ToggleSwitch}}">
+        <Setter Property="Foreground" Value="{DynamicResource SnitchPrimaryBrush}" />
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Foreground" Value="{DynamicResource SnitchPrimaryBrush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- accent primary buttons -->
+    <Style x:Key="Snitch.PrimaryButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+        <Setter Property="Appearance" Value="Primary" />
+    </Style>
+
+    <!-- section card with accent left border -->
+    <Style x:Key="Snitch.SectionCard" TargetType="ui:Card" BasedOn="{StaticResource {x:Type ui:Card}}">
+        <Setter Property="Margin" Value="0,0,0,16" />
+        <Setter Property="Padding" Value="16,16,16,16" />
+    </Style>
+
+    <!-- ============================
+         PAGE LAYOUT
+         ============================ -->
+
+    <Style x:Key="Snitch.PagePanel" TargetType="StackPanel">
+        <Setter Property="Margin" Value="0,0,24,24" />
+    </Style>
+
+</ResourceDictionary>

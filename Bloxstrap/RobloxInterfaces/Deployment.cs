@@ -12,6 +12,7 @@ namespace Bloxstrap.RobloxInterfaces
         public const string DefaultRobloxDomain = "roblox.com";
 
         public const string DefaultChannel = "production";
+        public const string LiveChannel = "live";
         
         private const string VersionStudioHash = "version-012732894899482c";
 

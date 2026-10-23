@@ -42,6 +42,8 @@ namespace Bloxstrap.Models.Persistable
         public bool AllowMultiInstance { get; set; } = false;
         // snitch.out: update channel (commit builds instead of tagged releases)
         public bool UseNightlyBuilds { get; set; } = false;
+        // snitch.out: apply app updates silently without prompting the user first
+        public bool SilentAppUpdates { get; set; } = false;
         // snitch.out: version snapshot keeper for testing older builds
         public string PinnedVersionGuid { get; set; } = "";
         public bool KeepOldVersions { get; set; } = true;
@@ -49,6 +51,23 @@ namespace Bloxstrap.Models.Persistable
         public bool EnableBetterMatchmaking { get; set; } = false;
         public bool EnableBetterMatchmakingRandomization { get; set; } = false;
         public WebEnvironment WebEnvironment { get; set; } = WebEnvironment.Production;
+
+        // snitch.out: executor / external tool friendly mode
+        // when enabled, DLLs dropped into the Modifications folder (dxgi.dll etc.)
+        // are treated as injection targets and guaranteed to be copied into the
+        // Roblox version folder on launch so externals and executors can attach.
+        public bool ExternalInjectionEnabled { get; set; } = false;
+
+        // snitch.out: injector DLLs to always keep in the version folder
+        // (dll hijacking targets like dxgi.dll, version.dll, etc.)
+        public List<string> InjectedDlls { get; set; } = new List<string>
+        {
+            "dxgi.dll",
+            "d3d9.dll",
+            "d3d11.dll",
+            "opengl32.dll",
+            "version.dll"
+        };
 
         // integration configuration
         public CleanerOptions CleanerOptions { get; set; } = CleanerOptions.TwoWeeks;

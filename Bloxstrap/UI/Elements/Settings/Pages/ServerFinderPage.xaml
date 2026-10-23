@@ -1,21 +1,20 @@
 <ui:UiPage x:Class="Bloxstrap.UI.Elements.Settings.Pages.ServerFinderPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.openxmlformats/expression/blend/2008"
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-      xmlns:local="clr-namespace:Bloxstrap.UI.Elements.Settings.Pages"
       xmlns:controls="clr-namespace:Bloxstrap.UI.Elements.Controls"
       xmlns:resources="clr-namespace:Bloxstrap.Resources"
       xmlns:dmodels="clr-namespace:Bloxstrap.UI.ViewModels.Settings"
       d:DataContext="{d:DesignInstance dmodels:ServerFinderViewModel, IsDesignTimeCreatable=True}"
-      mc:Ignorable="d" 
+      mc:Ignorable="d"
       d:DesignHeight="800" d:DesignWidth="800"
       Title="ServerFinderPage"
       Scrollable="True">
+    <StackPanel Style="{StaticResource Snitch.PagePanel}">
 
-    <StackPanel Margin="0,0,14,14">
-        <TextBlock Text="Find a server worth joining. Paste any game link or place ID." FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+        <TextBlock Text="Find a server worth joining. Paste any game link or place ID." Style="{StaticResource Snitch.PageHeader}" />
 
         <ui:CardAction Margin="0,12,0,0" Icon="Play28" Command="{Binding RejoinLastCommand, Mode=OneTime}" Visibility="{Binding LastSessionVisibility, Mode=OneWay}">
             <StackPanel>
@@ -30,13 +29,12 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-
             <ui:TextBox Grid.Column="0" Margin="0,0,8,0" PlaceholderText="https://www.roblox.com/games/1818/..." Text="{Binding PlaceInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <ui:Button Grid.Column="1" Margin="0,0,8,0" Icon="Search32" Content="Find servers" Command="{Binding SearchCommand, Mode=OneTime}" />
             <ComboBox Grid.Column="2" Width="150" Padding="10,5,10,5" ItemsSource="{Binding SortOptions, Mode=OneTime}" SelectedItem="{Binding SelectedSort, Mode=TwoWay}" />
         </Grid>
 
-        <TextBlock Margin="0,16,0,0" FontSize="20" FontWeight="Medium" Text="{Binding GameTitle, Mode=OneWay}" TextWrapping="Wrap" />
+        <TextBlock FontSize="20" FontWeight="Medium" Margin="0,16,0,0" Text="{Binding GameTitle, Mode=OneWay}" TextWrapping="Wrap" />
         <TextBlock FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding GameStats, Mode=OneWay}" TextWrapping="Wrap" />
         <TextBlock Margin="0,4,0,0" FontSize="13" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding StatusText, Mode=OneWay}" TextWrapping="Wrap" />
 
@@ -66,31 +64,28 @@
             <ui:Button Content="Load more" Command="{Binding LoadMoreCommand, Mode=OneTime}" />
         </StackPanel>
 
-        <TextBlock Text="Player lookup" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
-        <TextBlock Text="Username, user ID, or profile link. All public info, no login needed." FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" />
+        <TextBlock Text="{x:Static resources:Strings.Menu_ServerFinder_PlayerLookup}" Style="{StaticResource Snitch.SectionHeader}" Margin="0,24,0,0" />
+        <TextBlock Text="Username, user ID, or profile link. All public info, no login needed." FontSize="14" Foreground="{DynamicResource TextFillColorSecondaryBrush}" TextWrapping="Wrap" Margin="0,0,0,8" />
 
-        <Grid Margin="0,8,0,0">
+        <Grid Margin="0,0,0,8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-
             <ui:TextBox Grid.Column="0" Margin="0,0,8,0" PlaceholderText="Builderman or 156..." Text="{Binding LookupInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <ui:Button Grid.Column="1" Icon="Search32" Content="Look up" Command="{Binding LookupCommand, Mode=OneTime}" />
         </Grid>
 
-        <TextBlock Margin="0,8,0,0" FontSize="13" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding LookupStatus, Mode=OneWay}" TextWrapping="Wrap" />
+        <TextBlock Margin="0,0,0,8" FontSize="13" Foreground="{DynamicResource TextFillColorTertiaryBrush}" Text="{Binding LookupStatus, Mode=OneWay}" TextWrapping="Wrap" />
 
-        <Grid Margin="0,8,0,0" Visibility="{Binding LookupVisibility, Mode=OneWay}">
+        <Grid Margin="0,0,0,0" Visibility="{Binding LookupVisibility, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-
             <Border Grid.Column="0" Width="100" Height="100" CornerRadius="50" ClipToBounds="True" Margin="0,0,12,0">
                 <Image Source="{Binding LookupAvatarUrl, Mode=OneWay}" Stretch="UniformToFill" RenderOptions.BitmapScalingMode="HighQuality" />
             </Border>
-
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
                 <TextBlock FontSize="16" FontWeight="Medium" Text="{Binding LookupName, Mode=OneWay}" TextWrapping="Wrap" />
                 <TextBlock Margin="0,4,0,0" FontSize="13" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="{Binding LookupDetails, Mode=OneWay}" TextWrapping="Wrap" />

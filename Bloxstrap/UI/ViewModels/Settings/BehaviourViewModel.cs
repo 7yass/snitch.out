@@ -76,6 +76,17 @@
             }
         }
 
+        // snitch.out: apply app updates silently without prompting first
+        public bool SilentAppUpdates
+        {
+            get => App.Settings.Prop.SilentAppUpdates;
+            set
+            {
+                App.Settings.Prop.SilentAppUpdates = value;
+                OnPropertyChanged(nameof(SilentAppUpdates));
+            }
+        }
+
         public CleanerOptions SelectedCleanUpMode
         {
             get => App.Settings.Prop.CleanerOptions;

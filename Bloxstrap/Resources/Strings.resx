@@ -120,6 +120,21 @@
   <data name="Bootstrapper.AutoUpdateFailed" xml:space="preserve">
     <value>snitch.out was unable to automatically update to version {0}. Please update it manually by downloading and running it from the website.</value>
   </data>
+  <data name="Dialog.AppUpdate.Available" xml:space="preserve">
+    <value>snitch.out v{1} is available. You're currently on v{0}.
+
+Update now?</value>
+  </data>
+  <data name="Dialog.AppUpdate.NightlyAvailable" xml:space="preserve">
+    <value>A newer nightly build ({0}) is available.
+
+Update now?</value>
+  </data>
+  <data name="Dialog.AppUpdate.DownloadFailed" xml:space="preserve">
+    <value>snitch.out was unable to download the update after several attempts.
+
+You can still download it manually from the website.</value>
+  </data>
   <data name="Bootstrapper.ConfirmLaunch" xml:space="preserve">
     <value>Roblox is currently running, and launching another instance will close it. Are you sure you want to continue launching?</value>
   </data>
@@ -1350,6 +1365,63 @@ Would you like to switch your preferred channel to {0}?</value>
   <data name="Menu.Channel.Switcher.Unauthorized" xml:space="preserve">
     <value>The specified channel either doesn't exist or is private</value>
   </data>
+  <data name="Menu.Channel.Preset.Production" xml:space="preserve">
+    <value>Production</value>
+  </data>
+  <data name="Menu.Channel.Preset.Live" xml:space="preserve">
+    <value>Live</value>
+  </data>
+  <data name="Menu.Channel.Preset.Custom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Menu.Channel.PinStatus.Latest" xml:space="preserve">
+    <value>Using latest Roblox version.</value>
+  </data>
+  <data name="Menu.Channel.PinStatus.Pinned" xml:space="preserve">
+    <value>Pinned to {0} (cached). Updates blocked.</value>
+  </data>
+  <data name="Menu.Channel.PinStatus.Missing" xml:space="preserve">
+    <value>Pinned to {0} but it is not cached - will fall back to latest.</value>
+  </data>
+  <data name="Menu.Deployment.GoBack.Title" xml:space="preserve">
+    <value>Go back versions</value>
+  </data>
+  <data name="Menu.Deployment.GoBack.Description" xml:space="preserve">
+    <value>Pin a cached Roblox build to launch an older version. Old builds can't join live servers.</value>
+  </data>
+  <data name="Menu.Deployment.KeepOldVersions.Title" xml:space="preserve">
+    <value>Keep old versions</value>
+  </data>
+  <data name="Menu.Deployment.KeepOldVersions.Description" xml:space="preserve">
+    <value>Don't delete cached version folders on update. Required to build up snapshots for comparison.</value>
+  </data>
+  <data name="Menu.Deployment.ExternalInjection.Title" xml:space="preserve">
+    <value>External injection / executors</value>
+  </data>
+  <data name="Menu.Deployment.ExternalInjection.Description" xml:space="preserve">
+    <value>Drop dxgi.dll or other injector DLLs into the Modifications folder. They'll be copied into the Roblox version folder and loaded on launch.</value>
+  </data>
+  <data name="Menu.Deployment.OpenModsFolder" xml:space="preserve">
+    <value>Open Modifications folder</value>
+  </data>
+  <data name="Menu.Deployment.InjectedDlls" xml:space="preserve">
+    <value>Injector / executor DLLs</value>
+  </data>
+  <data name="Menu.Deployment.InjectedDlls.Description" xml:space="preserve">
+    <value>DLLs dropped into the Modifications folder (e.g. dxgi.dll) are copied into the Roblox version folder on launch so externals and executors can attach via DLL hijacking.</value>
+  </data>
+  <data name="Menu.Deployment.Injector.Ready" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Menu.Deployment.Injector.Missing" xml:space="preserve">
+    <value>Missing - drop the DLL into the Modifications folder</value>
+  </data>
+  <data name="Menu.Deployment.DownloadVersion" xml:space="preserve">
+    <value>Download &amp; cache a Roblox version</value>
+  </data>
+  <data name="Menu.Deployment.DownloadVersion.Description" xml:space="preserve">
+    <value>Enter a version hash (e.g. version-xxxxxxxxxx) to download and cache a Roblox build. It will then appear in the version dropdown above so you can pin and launch it.</value>
+  </data>
   <data name="Installer.FailedToImportSettings" xml:space="preserve">
     <value>Failed to import Bloxstrap settings.
 
@@ -1880,5 +1952,20 @@ Please don't change this setting unless you know what you're doing.</value>
   </data>
   <data name="Menu.Integrations.RobloxTheme.Description" xml:space="preserve">
     <value>The theme used by the Roblox app.</value>
+  </data>
+  <data name="Common.Mods" xml:space="preserve">
+    <value>Mods</value>
+  </data>
+  <data name="Common.FastFlagManager" xml:space="preserve">
+    <value>Fast Flag Manager</value>
+  </data>
+  <data name="Menu.Appearance.RobloxTitle" xml:space="preserve">
+    <value>Roblox window</value>
+  </data>
+  <data name="Menu.Integrations.MultiInstance" xml:space="preserve">
+    <value>Multi-instance</value>
+  </data>
+  <data name="Menu.ServerFinder.PlayerLookup" xml:space="preserve">
+    <value>Player lookup</value>
   </data>
 </root>

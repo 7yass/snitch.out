@@ -179,6 +179,39 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to snitch.out v{1} is available. You're currently on v{0}.
+        ///
+        ///Update now?.
+        /// </summary>
+        public static string Dialog_AppUpdate_Available {
+            get {
+                return ResourceManager.GetString("Dialog.AppUpdate.Available", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A newer nightly build ({0}) is available.
+        ///
+        ///Update now?.
+        /// </summary>
+        public static string Dialog_AppUpdate_NightlyAvailable {
+            get {
+                return ResourceManager.GetString("Dialog.AppUpdate.NightlyAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to snitch.out was unable to download the update after several attempts.
+        ///
+        ///You can still download it manually from the website..
+        /// </summary>
+        public static string Dialog_AppUpdate_DownloadFailed {
+            get {
+                return ResourceManager.GetString("Dialog.AppUpdate.DownloadFailed", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Roblox is attempting to set your channel to {0}, however your current preferred channel is {1}.
         ///
         ///
@@ -2516,6 +2549,69 @@ namespace Bloxstrap.Resources {
         ///
         ///{0}.
         /// </summary>
+        /// <summary>
+        ///   Looks up a localized string similar to Open Modifications folder..
+        /// </summary>
+        public static string Menu_Deployment_OpenModsFolder {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.OpenModsFolder", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Injector / executor DLLs..
+        /// </summary>
+        public static string Menu_Deployment_InjectedDlls {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.InjectedDlls", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to DLLs dropped into the Modifications folder (e.g. dxgi.dll) are copied into the Roblox version folder on launch so externals and executors can attach via DLL hijacking..
+        /// </summary>
+        public static string Menu_Deployment_InjectedDlls_Description {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.InjectedDlls.Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Ready..
+        /// </summary>
+        public static string Menu_Deployment_Injector_Ready {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.Injector.Ready", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Missing - drop the DLL into the Modifications folder..
+        /// </summary>
+        public static string Menu_Deployment_Injector_Missing {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.Injector.Missing", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Download &amp; cache a Roblox version..
+        /// </summary>
+        public static string Menu_Deployment_DownloadVersion {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.DownloadVersion", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Enter a version hash (e.g. version-xxxxxxxxxx) to download and cache a Roblox build. It will then appear in the version dropdown above so you can pin and launch it..
+        /// </summary>
+        public static string Menu_Deployment_DownloadVersion_Description {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.DownloadVersion.Description", resourceCulture);
+            }
+        }
+
         public static string Installer_FailedToImportSettings {
             get {
                 return ResourceManager.GetString("Installer.FailedToImportSettings", resourceCulture);
@@ -3545,7 +3641,115 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Channel.Switcher.Unauthorized", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to Production.
+        /// </summary>
+        public static string Menu_Channel_Preset_Production {
+            get {
+                return ResourceManager.GetString("Menu.Channel.Preset.Production", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Live.
+        /// </summary>
+        public static string Menu_Channel_Preset_Live {
+            get {
+                return ResourceManager.GetString("Menu.Channel.Preset.Live", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Custom.
+        /// </summary>
+        public static string Menu_Channel_Preset_Custom {
+            get {
+                return ResourceManager.GetString("Menu.Channel.Preset.Custom", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Using latest Roblox version..
+        /// </summary>
+        public static string Menu_Channel_PinStatus_Latest {
+            get {
+                return ResourceManager.GetString("Menu.Channel.PinStatus.Latest", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Pinned to {0} (cached). Updates blocked..
+        /// </summary>
+        public static string Menu_Channel_PinStatus_Pinned {
+            get {
+                return ResourceManager.GetString("Menu.Channel.PinStatus.Pinned", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Pinned to {0} but it is not cached - will fall back to latest..
+        /// </summary>
+        public static string Menu_Channel_PinStatus_Missing {
+            get {
+                return ResourceManager.GetString("Menu.Channel.PinStatus.Missing", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Go back versions.
+        /// </summary>
+        public static string Menu_Deployment_GoBack_Title {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.GoBack.Title", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Pin a cached Roblox build to launch an older version. Old builds can&apos;t join live servers..
+        /// </summary>
+        public static string Menu_Deployment_GoBack_Description {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.GoBack.Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Keep old versions.
+        /// </summary>
+        public static string Menu_Deployment_KeepOldVersions_Title {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.KeepOldVersions.Title", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Don&apos;t delete cached version folders on update. Required to build up snapshots for comparison..
+        /// </summary>
+        public static string Menu_Deployment_KeepOldVersions_Description {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.KeepOldVersions.Description", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to External injection / executors.
+        /// </summary>
+        public static string Menu_Deployment_ExternalInjection_Title {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.ExternalInjection.Title", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Drop dxgi.dll or other injector DLLs into the Modifications folder. They&apos;ll be copied into the Roblox version folder and loaded on launch..
+        /// </summary>
+        public static string Menu_Deployment_ExternalInjection_Description {
+            get {
+                return ResourceManager.GetString("Menu.Deployment.ExternalInjection.Description", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Force Fishstrap to download version from specific hash. Please do not change if you have no idea what this does..
         /// </summary>
@@ -5054,6 +5258,51 @@ namespace Bloxstrap.Resources {
         public static string Uninstaller_Uninstall {
             get {
                 return ResourceManager.GetString("Uninstaller.Uninstall", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mods.
+        /// </summary>
+        public static string Common_Mods {
+            get {
+                return ResourceManager.GetString("Common.Mods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fast Flag Manager.
+        /// </summary>
+        public static string Common_FastFlagManager {
+            get {
+                return ResourceManager.GetString("Common.FastFlagManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Roblox window.
+        /// </summary>
+        public static string Menu_Appearance_RobloxTitle {
+            get {
+                return ResourceManager.GetString("Menu.Appearance.RobloxTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Multi-instance.
+        /// </summary>
+        public static string Menu_Integrations_MultiInstance {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.MultiInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Player lookup.
+        /// </summary>
+        public static string Menu_ServerFinder_PlayerLookup {
+            get {
+                return ResourceManager.GetString("Menu.ServerFinder.PlayerLookup", resourceCulture);
             }
         }
     }

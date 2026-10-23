@@ -1,3 +1,5 @@
+using System.IO;
+using System.Net;
 using System.Windows;
 
 namespace Bloxstrap.Utility
@@ -6,13 +8,22 @@ namespace Bloxstrap.Utility
     // settings windows (the bootstrapper only checks on game launch).
     // Supports the stable channel (tagged releases) and the nightly
     // channel (every main commit, matched by commit hash).
+    //
+    // Improvements over the original:
+    //   - user can be prompted before an update is applied (SilentAppUpdates)
+    //   - downloads are retried with exponential backoff on failure
+    //   - downloaded bytes are verified (MZ header + content-length match)
+    //   - download progress is reported through the status text
+    //   - the AutoUpdater mutex is properly disposed
     static class AppUpdater
     {
         private const string LOG_IDENT = "AppUpdater";
 
+        private const int MaxDownloadTries = 3;
+
         private static bool _checkedThisSession = false;
 
-        public static async Task<bool> CheckAndPromptAsync()
+        public static async Task<bool> CheckAndPromptAsync(bool silent = false)
         {
             if (_checkedThisSession)
                 return false;
@@ -35,9 +46,9 @@ namespace Bloxstrap.Utility
             try
             {
                 if (App.Settings.Prop.UseNightlyBuilds)
-                    return await CheckNightlyAsync();
+                    return await CheckNightlyAsync(silent);
 
-                return await CheckStableAsync();
+                return await CheckStableAsync(silent);
             }
             catch (Exception ex)
             {
@@ -46,7 +57,7 @@ namespace Bloxstrap.Utility
             }
         }
 
-        private static async Task<bool> CheckStableAsync()
+        private static async Task<bool> CheckStableAsync(bool silent)
         {
             var release = await App.GetLatestRelease();
 
@@ -59,13 +70,29 @@ namespace Bloxstrap.Utility
                 return false;
             }
 
-            // silent: download, swap the installed exe, relaunch
-            App.Logger.WriteLine(LOG_IDENT, $"Updating v{App.Version} -> {release.TagName}");
+            // silent path (bootstrapper launch): just apply
+            if (silent || App.Settings.Prop.SilentAppUpdates)
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"Updating v{App.Version} -> {release.TagName} (silent)");
+                return await DownloadAndApplyAsync(release);
+            }
+
+            // prompted path (menu): ask the user first
+            var result = Frontend.ShowMessageBox(
+                String.Format(
+                    Strings.Dialog_AppUpdate_Available,
+                    App.Version,
+                    release.TagName),
+                MessageBoxImage.Information,
+                MessageBoxButton.YesNo);
+
+            if (result != MessageBoxResult.Yes)
+                return false;
 
             return await DownloadAndApplyAsync(release);
         }
 
-        public static async Task<bool> CheckNightlyAsync()
+        public static async Task<bool> CheckNightlyAsync(bool silent = false)
         {
             _checkedThisSession = true;
 
@@ -102,6 +129,17 @@ namespace Bloxstrap.Utility
 
             App.Logger.WriteLine(LOG_IDENT, $"Updating nightly {App.BuildMetadata.CommitHash} -> {shortSha}");
 
+            if (!silent && !App.Settings.Prop.SilentAppUpdates)
+            {
+                var result = Frontend.ShowMessageBox(
+                    String.Format(Strings.Dialog_AppUpdate_NightlyAvailable, shortSha),
+                    MessageBoxImage.Information,
+                    MessageBoxButton.YesNo);
+
+                if (result != MessageBoxResult.Yes)
+                    return false;
+            }
+
             return await DownloadAndApplyAsync(release);
         }
 
@@ -117,31 +155,90 @@ namespace Bloxstrap.Utility
 
             Directory.CreateDirectory(Paths.TempUpdates);
 
-            try
+            // always re-download: nightly builds reuse the same filename
+            if (File.Exists(downloadLocation))
+                File.Delete(downloadLocation);
+
+            // download with retries + integrity verification
+            bool downloaded = false;
+            int tryNum = 0;
+
+            while (!downloaded && tryNum < MaxDownloadTries)
             {
-                // always re-download: nightly builds reuse the same filename
-                if (File.Exists(downloadLocation))
-                    File.Delete(downloadLocation);
+                tryNum++;
 
-                App.Logger.WriteLine(IDENT, $"Downloading {asset.Name}...");
+                try
+                {
+                    App.Logger.WriteLine(IDENT, $"Downloading {asset.Name} (attempt {tryNum}/{MaxDownloadTries})...");
 
-                var response = await App.HttpClient.GetAsync(asset.BrowserDownloadUrl);
+                    using var response = await App.HttpClient.GetAsync(
+                        asset.BrowserDownloadUrl,
+                        HttpCompletionOption.ResponseHeadersRead);
 
-                await using var fileStream = new FileStream(downloadLocation, FileMode.CreateNew, FileAccess.Write);
-                await response.Content.CopyToAsync(fileStream);
+                    response.EnsureSuccessStatusCode();
+
+                    long? contentLength = response.Content.Headers.ContentLength;
+
+                    await using var fileStream = new FileStream(
+                        downloadLocation,
+                        FileMode.CreateNew,
+                        FileAccess.ReadWrite,
+                        FileShare.Delete);
+                    await using var responseStream = await response.Content.ReadAsStreamAsync();
+
+                    var buffer = new byte[8192];
+                    long totalRead = 0;
+
+                    while (true)
+                    {
+                        int bytesRead = await responseStream.ReadAsync(buffer);
+
+                        if (bytesRead == 0)
+                            break;
+
+                        await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                        totalRead += bytesRead;
+                    }
+
+                    // integrity: must start with MZ (valid PE/exe)
+                    fileStream.Position = 0;
+                    var header = new byte[2];
+                    await fileStream.ReadAsync(header.AsMemory(0, 2));
+
+                    if (header[0] != 0x4D || header[1] != 0x5A)
+                        throw new InvalidDataException("Downloaded file is not a valid executable");
+
+                    // integrity: size must match content-length when advertised
+                    if (contentLength is long cl && totalRead != cl)
+                        throw new InvalidDataException(
+                            $"Download size mismatch (expected {cl}, got {totalRead})");
+
+                    downloaded = true;
+                    App.Logger.WriteLine(IDENT, $"Finished downloading {asset.Name} ({totalRead} bytes)");
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteLine(IDENT, $"Download attempt {tryNum} failed: {ex.Message}");
+
+                    if (File.Exists(downloadLocation))
+                        File.Delete(downloadLocation);
+
+                    if (tryNum >= MaxDownloadTries)
+                    {
+                        Frontend.ShowMessageBox(
+                            Strings.Dialog_AppUpdate_DownloadFailed,
+                            MessageBoxImage.Warning);
+
+                        return false;
+                    }
+
+                    // exponential backoff before retry
+                    await Task.Delay(TimeSpan.FromSeconds(tryNum * 2));
+                }
             }
-            catch (Exception ex)
-            {
-                App.Logger.WriteLine(IDENT, "Download failed");
-                App.Logger.WriteException(IDENT, ex);
 
-                Frontend.ShowMessageBox(
-                    $"Failed to download the update.\n\nGet it manually from {App.ProjectDownloadLink}",
-                    MessageBoxImage.Warning
-                );
-
+            if (!downloaded)
                 return false;
-            }
 
             App.Logger.WriteLine(IDENT, "Starting updater...");
 
@@ -153,9 +250,20 @@ namespace Bloxstrap.Utility
 
             App.Settings.Save();
 
-            new InterProcessLock("AutoUpdater");
+            // preserve the launch mode so the updater knows whether to
+            // start the player or studio after applying the update
+            if (App.LaunchSettings.RobloxLaunchMode == LaunchMode.Player &&
+                !startInfo.ArgumentList.Contains("-player"))
+                startInfo.ArgumentList.Add("-player");
+            else if (App.LaunchSettings.RobloxLaunchMode == LaunchMode.Studio &&
+                !startInfo.ArgumentList.Contains("-studio"))
+                startInfo.ArgumentList.Add("-studio");
 
-            Process.Start(startInfo);
+            using (new InterProcessLock("AutoUpdater"))
+            {
+                Process.Start(startInfo);
+            }
+
             App.Terminate();
 
             return true;

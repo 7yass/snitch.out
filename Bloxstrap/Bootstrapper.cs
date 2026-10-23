@@ -1183,57 +1183,15 @@ namespace Bloxstrap
 
             SetStatus(Strings.Bootstrapper_Status_UpgradingBloxstrap);
 
+            if (Dialog is not null)
+                Dialog.CancelEnabled = false;
+
             try
             {
-#if DEBUG_UPDATER
-                string downloadLocation = Path.Combine(Paths.TempUpdates, "Bloxstrap.exe");
-
-                Directory.CreateDirectory(Paths.TempUpdates);
-
-                File.Copy(Paths.Process, downloadLocation, true);
-#else
-                // snitch.out: pick our exe by name, releases also carry the setup
-                var asset = releaseInfo.Assets!.FirstOrDefault(x => x.Name.Equals($"{App.ProjectName}.exe", StringComparison.OrdinalIgnoreCase)) ?? releaseInfo.Assets![0];
-
-                string downloadLocation = Path.Combine(Paths.TempUpdates, asset.Name);
-
-                Directory.CreateDirectory(Paths.TempUpdates);
-
-                App.Logger.WriteLine(LOG_IDENT, $"Downloading {releaseInfo.TagName}...");
-
-                if (!File.Exists(downloadLocation))
-                {
-                    var response = await App.HttpClient.GetAsync(asset.BrowserDownloadUrl);
-
-                    await using var fileStream = new FileStream(downloadLocation, FileMode.OpenOrCreate, FileAccess.Write);
-                    await response.Content.CopyToAsync(fileStream);
-                }
-#endif
-
-                App.Logger.WriteLine(LOG_IDENT, $"Starting {version}...");
-
-                ProcessStartInfo startInfo = new()
-                {
-                    FileName = downloadLocation,
-                };
-
-                startInfo.ArgumentList.Add("-upgrade");
-
-                foreach (string arg in App.LaunchSettings.Args)
-                    startInfo.ArgumentList.Add(arg);
-
-                if (_launchMode == LaunchMode.Player && !startInfo.ArgumentList.Contains("-player"))
-                    startInfo.ArgumentList.Add("-player");
-                else if (_launchMode == LaunchMode.Studio && !startInfo.ArgumentList.Contains("-studio"))
-                    startInfo.ArgumentList.Add("-studio");
-
-                App.Settings.Save();
-
-                new InterProcessLock("AutoUpdater");
-
-                Process.Start(startInfo);
-
-                return true;
+                // snitch.out: delegate to the shared, robust updater.
+                // handles retries, integrity verification, and preserving
+                // the player/studio launch mode across the upgrade.
+                return await AppUpdater.DownloadAndApplyAsync(releaseInfo);
             }
             catch (Exception ex)
             {
@@ -1706,6 +1664,54 @@ namespace Bloxstrap
             return true;
         }
 
+        // snitch.out: external injection / executors.
+        // copies configured injector DLLs (dxgi.dll etc.) from Modifications/
+        // into the Roblox version folder root so they load via DLL hijacking
+        // next to RobloxPlayerBeta.exe on every launch. files are added to
+        // modFolderFiles so they're tracked in the mod manifest and restored
+        // across updates / reinstalls.
+        private void ApplyInjectedDlls(List<string> modFolderFiles, ref bool success)
+        {
+            const string LOG_IDENT = "Bootstrapper::ApplyInjectedDlls";
+
+            App.Logger.WriteLine(LOG_IDENT, "Applying external injection DLLs...");
+
+            foreach (string dllName in App.Settings.Prop.InjectedDlls)
+            {
+                if (_cancelTokenSource.IsCancellationRequested)
+                    return;
+
+                string sourceDll = Path.Combine(Paths.Modifications, dllName);
+                if (!File.Exists(sourceDll))
+                    continue;
+
+                string targetDll = Path.Combine(_latestVersionDirectory, dllName);
+
+                // already up to date
+                if (File.Exists(targetDll) && MD5Hash.FromFile(sourceDll) == MD5Hash.FromFile(targetDll))
+                {
+                    modFolderFiles.Add(dllName);
+                    continue;
+                }
+
+                Directory.CreateDirectory(Path.GetDirectoryName(targetDll)!);
+                Filesystem.AssertReadOnly(targetDll);
+                try
+                {
+                    File.Copy(sourceDll, targetDll, true);
+                    Filesystem.AssertReadOnly(targetDll);
+                    modFolderFiles.Add(dllName);
+                    App.Logger.WriteLine(LOG_IDENT, $"Injected {dllName} into version folder");
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, $"Failed to inject {dllName}");
+                    App.Logger.WriteException(LOG_IDENT, ex);
+                    success = false;
+                }
+            }
+        }
+
         private async Task<bool> ApplyModifications()
         {
             const string LOG_IDENT = "Bootstrapper::ApplyModifications";
@@ -1800,6 +1806,14 @@ namespace Bloxstrap
                 if (!ApplyModFile(Paths.Modifications, file, modFolderFiles, ref success))
                     return true;
             }
+
+            // snitch.out: external injection / executors.
+            // guaranteed copy of configured injector DLLs (dxgi.dll etc.) into
+            // the Roblox version folder root so they load via DLL hijacking next
+            // to RobloxPlayerBeta.exe on every launch. tracked in the mod
+            // manifest so they survive updates and get restored if removed.
+            if (App.Settings.Prop.ExternalInjectionEnabled)
+                ApplyInjectedDlls(modFolderFiles, ref success);
 
             // snitch.out: Froststrap-style targeted mods for this client.
             // Applied after shared mods so they win on conflicts.
@@ -2054,6 +2068,144 @@ namespace Bloxstrap
             fastZip.ExtractZip(package.DownloadPath, packageFolder, fileFilter);
 
             App.Logger.WriteLine(LOG_IDENT, $"Finished extracting {package.Name}");
+        }
+
+        // snitch.out: download + cache an entire Roblox version into Versions/{guid}/
+        // so it can be pinned and launched later (go back versions to any build).
+        public async Task<bool> DownloadCachedVersion(string versionGuid)
+        {
+            const string LOG_IDENT = "Bootstrapper::DownloadCachedVersion";
+
+            if (String.IsNullOrWhiteSpace(versionGuid))
+                return false;
+
+            if (VersionManager.IsInstalled(versionGuid))
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"{versionGuid} is already cached.");
+                return true;
+            }
+
+            // ensure the package -> directory mapping exists
+            if (PackageDirectoryMap == null)
+                await SetupPackageDictionaries();
+
+            string versionDir = Path.Combine(Paths.Versions, versionGuid);
+            Directory.CreateDirectory(versionDir);
+
+            string manifestUrl = Deployment.GetLocation($"/{versionGuid}-rbxPkgManifest.txt");
+            string manifestText;
+
+            try
+            {
+                manifestText = await App.HttpClient.GetStringAsync(manifestUrl);
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"Failed to fetch manifest for {versionGuid}: {ex.Message}");
+                return false;
+            }
+
+            var manifest = new PackageManifest(manifestText);
+            bool success = true;
+
+            foreach (var package in manifest)
+            {
+                if (_cancelTokenSource.IsCancellationRequested)
+                    return false;
+
+                string packageUrl = Deployment.GetLocation($"/{versionGuid}-{package.Name}");
+                string downloadPath = package.DownloadPath;
+
+                // skip if already downloaded and valid
+                bool alreadyValid = File.Exists(downloadPath) && MD5Hash.FromFile(downloadPath) == package.Signature;
+
+                if (!alreadyValid)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, $"Downloading {package.Name}...");
+
+                    try
+                    {
+                        Directory.CreateDirectory(Paths.Downloads);
+                        var response = await App.HttpClient.GetAsync(
+                            packageUrl,
+                            HttpCompletionOption.ResponseHeadersRead,
+                            _cancelTokenSource.Token
+                        );
+                        response.EnsureSuccessStatusCode();
+
+                        await using var stream = await response.Content.ReadAsStreamAsync(_cancelTokenSource.Token);
+                        await using var fileStream = new FileStream(
+                            downloadPath,
+                            FileMode.CreateNew,
+                            FileAccess.ReadWrite,
+                            FileShare.Delete
+                        );
+                        var buffer = new byte[8192];
+
+                        while (true)
+                        {
+                            if (_cancelTokenSource.IsCancellationRequested)
+                                return false;
+
+                            int bytesRead = await stream.ReadAsync(buffer, _cancelTokenSource.Token);
+
+                            if (bytesRead == 0)
+                                break;
+
+                            await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
+                        }
+
+                        string hash = MD5Hash.FromStream(fileStream);
+
+                        if (hash != package.Signature)
+                        {
+                            App.Logger.WriteLine(LOG_IDENT, $"Checksum mismatch for {package.Name}");
+                            success = false;
+                            continue;
+                        }
+
+                        App.Logger.WriteLine(LOG_IDENT, $"Finished downloading {package.Name}");
+                    }
+                    catch (Exception ex)
+                    {
+                        App.Logger.WriteLine(LOG_IDENT, $"Failed to download {package.Name}: {ex.Message}");
+                        success = false;
+                        continue;
+                    }
+                }
+                else
+                {
+                    App.Logger.WriteLine(LOG_IDENT, $"{package.Name} already cached, skipping download");
+                }
+
+                // extract into Versions/{guid}/
+                if (PackageDirectoryMap is null)
+                    await SetupPackageDictionaries();
+
+                string packageDir = PackageDirectoryMap!.GetValueOrDefault(package.Name) ?? "";
+
+                if (String.IsNullOrEmpty(packageDir))
+                {
+                    App.Logger.WriteLine(LOG_IDENT, $"WARNING: {package.Name} not in package map, skipping extraction");
+                    continue;
+                }
+
+                string packageFolder = Path.Combine(versionDir, packageDir);
+
+                try
+                {
+                    var fastZip = new FastZip(_fastZipEvents);
+                    fastZip.ExtractZip(downloadPath, packageFolder, null);
+                    App.Logger.WriteLine(LOG_IDENT, $"Extracted {package.Name}");
+                }
+                catch (Exception ex)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, $"Failed to extract {package.Name}: {ex.Message}");
+                    success = false;
+                }
+            }
+
+            return success;
         }
         #endregion
     }
