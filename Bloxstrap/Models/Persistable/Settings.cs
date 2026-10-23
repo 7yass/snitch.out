@@ -24,6 +24,8 @@ namespace Bloxstrap.Models.Persistable
         public byte AcrylicBackgroundOpacity { get; set; } = 165;
         public bool ForceLocalData { get; set; } = false;
         public bool CheckForUpdates { get; set; } = true;
+        // snitch.out: last GitHub commit SHA the source-based updater built
+        public string? LastCommitSha { get; set; }
         public bool ConfirmLaunches { get; set; } = true;
         public bool EnableRobloxBackgroundApp { get; set; } = false;
         public RobloxTheme RobloxTheme { get; set; } = RobloxTheme.Default;

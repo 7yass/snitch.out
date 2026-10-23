@@ -43,11 +43,12 @@ namespace Bloxstrap
         public LaunchFlag BloxshadeFlag { get; } = new("bloxshade");
 
         public LaunchFlag KillMutexFlag              { get; } = new("killmutex");
+        public LaunchFlag UpdaterestartFlag          { get; } = new("updaterestart");
 
 #if DEBUG
         public bool BypassUpdateCheck => true;
 #else
-        public bool BypassUpdateCheck => UninstallFlag.Active || WatcherFlag.Active || KillMutexFlag.Active;
+        public bool BypassUpdateCheck => UninstallFlag.Active || WatcherFlag.Active || KillMutexFlag.Active || UpdaterestartFlag.Active;
 #endif
 
         public LaunchMode RobloxLaunchMode { get; set; } = LaunchMode.None;

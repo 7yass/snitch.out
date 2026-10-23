@@ -60,11 +60,14 @@ namespace Bloxstrap
 
                 try
                 {
-                    File.Copy(Paths.Process, Paths.Application, true);
+                    // snitch.out: build from source instead of copying the
+                    // running installer exe. pulls the latest source from
+                    // GitHub, compiles it, and installs the output here.
+                    SourceUpdater.InstallFromSourceAsync(InstallLocation).GetAwaiter().GetResult();
                 }
                 catch (Exception ex)
                 {
-                    App.Logger.WriteLine(LOG_IDENT, "Could not overwrite executable");
+                    App.Logger.WriteLine(LOG_IDENT, "Could not install from source");
                     App.Logger.WriteException(LOG_IDENT, ex);
 
                     Frontend.ShowMessageBox(Strings.Installer_Install_CannotOverwrite, MessageBoxImage.Error);

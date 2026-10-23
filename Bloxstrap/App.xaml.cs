@@ -238,6 +238,15 @@ namespace Bloxstrap
 
             LaunchSettings = new LaunchSettings(e.Args);
 
+            // snitch.out: we're the restart helper from a source update.
+            // wait for the old process to release the exe, swap in the new
+            // build, launch it, and exit.
+            if (LaunchSettings.UpdaterestartFlag.Active)
+            {
+                HandleUpdaterestart(e.Args);
+                return;
+            }
+
             // installation check begins here
             using var uninstallKey = Registry.CurrentUser.OpenSubKey(UninstallKey);
             string? installLocation = null;
@@ -346,6 +355,17 @@ namespace Bloxstrap
 
                 Locale.Set(Settings.Prop.Locale);
 
+                // snitch.out: every launch checks GitHub for new commits. if
+                // the main branch has advanced, we pull the source, compile
+                // it, install over the running app, and restart.
+                if (!LaunchSettings.BypassUpdateCheck)
+                {
+                    bool updated = SourceUpdater.CheckAndUpdateAsync().GetAwaiter().GetResult();
+
+                    if (updated)
+                        return; // CheckAndUpdateAsync already restarted the app
+                }
+
                 if (!LaunchSettings.BypassUpdateCheck)
                     Installer.HandleUpgrade();
 
@@ -358,6 +378,70 @@ namespace Bloxstrap
             }
 
             // you must *explicitly* call terminate when everything is done, it won't be called implicitly
+        }
+
+        // snitch.out: source update restart helper.
+        // args: -updaterestart "<path to newly built exe>" "<install directory>"
+        private static void HandleUpdaterestart(string[] args)
+        {
+            const string LOG_IDENT = "App::HandleUpdaterestart";
+
+            string? newExe = null;
+            string? installDir = null;
+
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                if (args[i] == "-updaterestart")
+                {
+                    newExe = args[i + 1].Trim('"');
+                    i++;
+                }
+                else if (args[i] == "--install-dir")
+                {
+                    installDir = args[i + 1].Trim('"');
+                    i++;
+                }
+            }
+
+            if (String.IsNullOrEmpty(newExe) || !File.Exists(newExe))
+            {
+                App.Logger.WriteLine(LOG_IDENT, "No valid new exe path, falling back to normal launch");
+                return;
+            }
+
+            installDir ??= Paths.Base;
+
+            App.Logger.WriteLine(LOG_IDENT, $"Waiting for old process to release the exe...");
+            Thread.Sleep(2000); // give the parent process time to terminate and release the file lock
+
+            try
+            {
+                // replace the running exe with the newly built one
+                File.Copy(newExe, Paths.Process, true);
+                App.Logger.WriteLine(LOG_IDENT, $"Replaced {Paths.Process} with updated build");
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+                // try launching anyway
+            }
+
+            // launch the updated app normally
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = Paths.Process,
+                    UseShellExecute = true
+                });
+                App.Logger.WriteLine(LOG_IDENT, "Launched updated app");
+            }
+            catch (Exception ex)
+            {
+                App.Logger.WriteException(LOG_IDENT, ex);
+            }
+
+            Environment.Exit(0);
         }
     }
 }
